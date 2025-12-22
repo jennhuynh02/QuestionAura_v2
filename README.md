@@ -1,30 +1,35 @@
-# QuestionAura_v2
+# QuestionAura Remastered
 
-A career-tribute rebuild of the original QuestionAura project, serving as both a learning journey and a demonstration of modern development practices with AI-assisted development.
+A career-tribute rebuild of the original [QuestionAura (2020)](https://github.com/jennhuynh02/QuestionAura) project, serving as both a learning journey and a demonstration of modern development practices with AI-assisted development.
 
 ## Project Intent
 
-This is a learning-focused rebuild that emphasizes:
-- Working with contemporary web technologies
-- Exploring AI-assisted development workflows
-- Building incrementally with modern best practices
-- Intentionally kept minimal and evolving
+QuestionAura was my capstone project at App Academy, the bootcamp that kickstarted my career. The original version is no longer hosted (regrets about not keeping up with Ruby versioning on Heroku), but it's been 5 years and I'm ready to rebuild it with the tech stack I'll most likely be using in my next role.
+
+This isn't just a portfolio piece. It's a working document of how I build now—using AI tools, thinking through architecture decisions in real-time, and learning what works by practicing development during today's rapid tech evolution.
 
 ## Tech Stack
 
-### Frontend
-- **React** with **TypeScript** for type-safe, component-based UI development
-
-### Backend  
-- **Python** for server-side logic and API endpoints
-
-### Database
-- **SQL** database for structured data persistence
+**Original**: Ruby on Rails, hosted on Heroku  
+**Rebuild**: React + TypeScript, Python backend, SQL database, image hosting (coming later)
 
 ## Development Philosophy
 
 This project is being built with significant AI assistance, exploring how AI tools can accelerate development while maintaining code quality and best practices. The repository is intentionally kept minimal and will evolve organically based on learning goals.
 
+**What I'm learning:**
+
+- How to prompt effectively across multiple tools
+- When to let AI generate vs when to write myself
+- How to keep AI from overwhelming me with suggestions (working log + parking lot approach)
+- Making sure every line of code is intentional, even if AI-assisted
+
+**Why document this?**
+Because this is how modern development works. Pretending AI tools don't exist or hiding that I use them would be dishonest. I want to understand how to leverage them efficiently while maintaining full ownership of architectural decisions.
+
+I will be actively updating my real-time thought process in a document - this is public - feel free to comment; as I am exploring learnings and ideas about software engineering and modern ai tools:
+**[Development Log](https://docs.google.com/document/d/169nCtFM70IJygxi9TUZhb2Sw239cI15fEr-gwXga3WY/edit?tab=t.0)**
+
 ## Status
 
-🚧 **Early Development** - Basic scaffolding only. Application logic, authentication, database schemas, and deployment configurations will be added incrementally as the project progresses.
+🚧 **Early Development** - Basic scaffolding only. Application logic, authentication, database schemas, image hosting, and deployment configurations will be added incrementally as the project progresses.
