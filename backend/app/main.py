@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.database import engine
+from fastapi import Depends
+from app.auth import verify_token
 
 load_dotenv()
 
@@ -18,6 +20,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/protected")
+def protected_route(user=Depends(verify_token)):
+    return {
+        "message": "You are authenticated",
+        "user": {
+            "sub": user.get("sub"),
+            "email": user.get("email"),
+            "iss": user.get("iss"),
+            "aud": user.get("aud"),
+        },
+    }
 
 @app.get("/health")
 def health_check():
