@@ -144,3 +144,4 @@ __pycache__/
 
 # OS files
 .DS_Store
+backend/app/__pycache__/__init__.cpython-313.pyc
