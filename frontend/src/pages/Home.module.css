@@ -1,0 +1,185 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f1f2f2;
+  color: #282829;
+}
+
+.navbar {
+  height: 50px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 20px;
+}
+
+.logo {
+  font-family: "Georgia", serif;
+  font-size: 24px;
+  color: #b92b27;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.navIcons {
+  display: flex;
+  gap: 30px;
+  margin-left: 20px;
+}
+
+.navIcon {
+  font-size: 20px;
+  color: #636466;
+  cursor: pointer;
+}
+
+.searchBar {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.searchBar input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  background-color: #f7f7f8;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profilePic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ddd;
+}
+
+.logoutBtn {
+  background: none;
+  border: 1px solid #dee0e1;
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #636466;
+}
+
+.mainLayout {
+  display: flex;
+  max-width: 1100px;
+  margin: 20px auto;
+  width: 100%;
+  gap: 24px;
+}
+
+.sidebar {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebarItem {
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #636466;
+}
+
+.sidebarItem:hover {
+  background-color: #e6e6e6;
+}
+
+.activeSidebarItem {
+  background-color: #ffe8e8;
+  color: #b92b27;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.postInput {
+  background: white;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #dee0e1;
+  margin-bottom: 10px;
+}
+
+.postInputPrompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #939598;
+  font-size: 18px;
+  cursor: text;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonCard {
+  background: white;
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid #dee0e1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonText {
+  height: 12px;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.skeletonTitle {
+  height: 20px;
+  width: 70%;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.rightSidebar {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.widget {
+  background: white;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.widgetTitle {
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
