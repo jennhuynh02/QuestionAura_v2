@@ -66,25 +66,41 @@
 }
 
 .demoBtn {
-  background-color: #e34c2d;
+  background-color: #5d82b1;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 16px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+}
+
+.demoBtn:hover {
+  background-color: #4c6b94;
 }
 
 .signupBtn {
-  background-color: #4078b0;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-weight: bold;
+  background-color: white;
+  color: #5d82b1;
+  border: 1.5px solid #5d82b1;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 16px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.signupBtn:hover {
+  background-color: #f8faff;
+  border-color: #4c6b94;
+  color: #4c6b94;
 }
 
 .disclaimer {
@@ -118,11 +134,17 @@
 }
 
 .inputGroup input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f0f5ff;
+  padding: 12px;
+  border: 1px solid #e1e9f5;
+  border-radius: 6px;
+  background-color: #f3f7ff;
   font-size: 14px;
+  width: 100%;
+  color: #666;
+}
+
+.inputGroup input:disabled {
+  cursor: not-allowed;
 }
 
 .loginBtnWrapper {
@@ -131,14 +153,20 @@
 }
 
 .loginBtn {
-  background-color: #4078b0;
+  background-color: #5d82b1;
   color: white;
   border: none;
-  padding: 8px 24px;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+}
+
+.loginBtn:hover {
+  background-color: #4c6b94;
 }
 
 .footer {

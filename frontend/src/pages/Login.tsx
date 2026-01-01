@@ -20,7 +20,7 @@ export default function Login() {
               className={styles.demoBtn}
               onClick={() => loginWithRedirect()}
             >
-              Guest Demo Login
+              Log in
             </button>
             <button
               className={styles.signupBtn}
@@ -30,7 +30,7 @@ export default function Login() {
                 })
               }
             >
-              Signup Form Page
+              Create account
             </button>
             <div className={styles.disclaimer}>
               <span className={styles.link}>Signup With Email</span> By signing
@@ -43,19 +43,20 @@ export default function Login() {
           <div className={styles.divider}></div>
 
           <div className={styles.rightCol}>
-            <h3 className={styles.loginSubTitle}>Login</h3>
+            <h3 className={styles.loginSubTitle}>Sample Account</h3>
             <div className={styles.inputGroup}>
-              <input type="email" placeholder="email@example.com" disabled />
+              <input type="email" value="guest@example.com" disabled />
             </div>
             <div className={styles.inputGroup}>
-              <input type="password" placeholder="••••••••" disabled />
+              <input type="password" value="••••••••" disabled />
             </div>
             <div className={styles.loginBtnWrapper}>
               <button
                 className={styles.loginBtn}
+                // Jenn TODO: add sample account login
                 onClick={() => loginWithRedirect()}
               >
-                Login
+                Demo Login
               </button>
             </div>
           </div>
