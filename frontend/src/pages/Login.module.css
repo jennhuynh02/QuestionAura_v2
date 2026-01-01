@@ -188,6 +188,20 @@
   width: 32px;
   height: 32px;
   cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.icon:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.linkedinIcon {
+  color: #0077b5;
+}
+
+.githubIcon {
+  color: #24292e;
 }
 
 .inspiredBy {
