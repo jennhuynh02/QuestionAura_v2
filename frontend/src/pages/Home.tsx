@@ -1,8 +1,39 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 
 export default function Home() {
-  const { user, logout } = useAuth0();
+  const { user, logout, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
+
+  // Check if user is using demo login
+  const demoUserStr = localStorage.getItem("demo_user");
+  const isDemoMode = !isAuthenticated && demoUserStr;
+  const demoUser = isDemoMode ? JSON.parse(demoUserStr) : null;
+  
+  const currentUser = isDemoMode ? demoUser : user;
+  
+  const handleLogout = () => {
+    if (isDemoMode) {
+      localStorage.removeItem("demo_token");
+      localStorage.removeItem("demo_user");
+      navigate("/login");
+    } else {
+      logout({ logoutParams: { returnTo: window.location.origin } });
+    }
+  };
+
+  const getUserPicture = () => {
+    if (currentUser?.picture) return currentUser.picture;
+    if (isDemoMode && currentUser?.username) {
+      return `https://ui-avatars.com/api/?name=${currentUser.username}`;
+    }
+    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
+  };
+
+  const getUserName = () => {
+    return currentUser?.name || currentUser?.username || currentUser?.email || "User";
+  };
 
   return (
     <div className={styles.container}>
@@ -21,15 +52,13 @@ export default function Home() {
         </div>
         <div className={styles.userActions}>
           <img
-            src={user?.picture}
-            alt={user?.name}
+            src={getUserPicture()}
+            alt={getUserName()}
             className={styles.profilePic}
           />
           <button
             className={styles.logoutBtn}
-            onClick={() =>
-              logout({ logoutParams: { returnTo: window.location.origin } })
-            }
+            onClick={handleLogout}
           >
             Log Out
           </button>
@@ -54,7 +83,7 @@ export default function Home() {
         <div className={styles.content}>
           <div className={styles.postInput}>
             <div className={styles.postInputPrompt}>
-              <img src={user?.picture} alt="" className={styles.profilePic} />
+              <img src={getUserPicture()} alt="" className={styles.profilePic} />
               <span>What do you want to ask or share?</span>
             </div>
           </div>

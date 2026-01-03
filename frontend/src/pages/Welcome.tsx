@@ -76,6 +76,26 @@ export default function Welcome() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setError(null);
+    setIsSyncing(true);
+
+    try {
+      const response = await userService.demoLogin();
+
+      // Store the demo token in localStorage
+      localStorage.setItem("demo_token", response.access_token);
+      localStorage.setItem("demo_user", JSON.stringify(response.user));
+
+      navigate("/");
+    } catch (err) {
+      console.error("Demo login failed:", err);
+      setError("Demo login failed. Please ensure the backend is running.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const handleUsernameSubmit = async () => {
     if (!pendingSignup || !username) {
       setError("Please enter a username");
@@ -209,7 +229,7 @@ export default function Welcome() {
               <input type="password" value="••••••••" disabled />
             </div>
             <div className={styles.loginBtnWrapper}>
-              <button className={styles.loginBtn} onClick={() => handleLogin()}>
+              <button className={styles.loginBtn} onClick={handleDemoLogin}>
                 Demo Login
               </button>
             </div>

@@ -5,13 +5,14 @@ import Welcome from "./pages/Welcome";
 
 function App() {
   const { isAuthenticated } = useAuth0();
+  const isDemoAuthenticated = !!localStorage.getItem("demo_token");
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+          element={isAuthenticated || isDemoAuthenticated ? <Home /> : <Navigate to="/login" />}
         />
         <Route path="/login" element={<Welcome />} />
       </Routes>

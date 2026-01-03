@@ -6,6 +6,18 @@ export type UserCreate = components["schemas"]["UserCreate"];
 
 export const userService = {
   /**
+   * Demo login endpoint that returns a JWT token without Auth0.
+   */
+  demoLogin: async (): Promise<{
+    access_token: string;
+    token_type: string;
+    user: UserResponse;
+  }> => {
+    const { data } = await axiosInstance.post("/auth/demo-login");
+    return data;
+  },
+
+  /**
    * Sync or create user in backend from Auth0 authentication.
    * This ensures the backend has the latest user information.
    */

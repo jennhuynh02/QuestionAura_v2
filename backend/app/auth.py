@@ -53,6 +53,7 @@ def verify_token(
 ) -> dict:
     """
     Verify Auth0 JWT token and return payload.
+    Also accepts demo tokens for demo user access.
     
     Returns:
         dict: JWT payload containing 'sub', 'email', etc.
@@ -61,6 +62,22 @@ def verify_token(
         HTTPException: If token is invalid, expired, or improperly signed.
     """
     token = credentials.credentials
+    
+    # Try to decode as demo token first (for demo user)
+    try:
+        demo_secret = os.getenv("DEMO_JWT_SECRET", "demo-secret-key-change-in-production")
+        payload = jwt.decode(
+            token,
+            demo_secret,
+            algorithms=["HS256"],
+            options={"verify_aud": False}  # Demo tokens may not have exact audience
+        )
+        # If it has the demo flag, it's a valid demo token
+        if payload.get("demo") is True:
+            return payload
+    except JWTError:
+        # Not a demo token, continue to Auth0 verification
+        pass
     
     # Get the key ID from token header
     unverified_header = get_unverified_header(token)
