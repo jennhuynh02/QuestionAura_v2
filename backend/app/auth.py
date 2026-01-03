@@ -5,31 +5,40 @@ from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-# Auth0 Configuration
+# Auth0 Configuration with validation
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 API_AUDIENCE = os.getenv("AUTH0_API_AUDIENCE")
-ISSUER = f"https://{AUTH0_DOMAIN}/"
 
+if not AUTH0_DOMAIN or not API_AUDIENCE:
+    raise ValueError(
+        "AUTH0_DOMAIN and AUTH0_API_AUDIENCE environment variables must be set"
+    )
+
+ISSUER = f"https://{AUTH0_DOMAIN}/"
+JWKS_URL = f"{ISSUER}.well-known/jwks.json"
 
 security = HTTPBearer()
 
 
 @functools.lru_cache()
 def get_jwks() -> dict:
-    """Fetch and cache Auth0 JWKS"""
-    jwks_url = f"{ISSUER}.well-known/jwks.json"
-    response = requests.get(jwks_url)
-    
-    if response.status_code != 200:
-        raise RuntimeError(
-            f"Failed to fetch JWKS from {jwks_url}: {response.status_code}"
+    """
+    Fetch and cache Auth0 JWKS.
+    Raises HTTPException if unable to fetch JWKS.
+    """
+    try:
+        response = requests.get(JWKS_URL, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Unable to verify authentication"
         )
-    
-    return response.json()
 
 
 def get_unverified_header(token: str) -> dict:
-    """Extract header from JWT without verification"""
+    """Extract header from JWT without verification."""
     try:
         return jwt.get_unverified_header(token)
     except JWTError:
@@ -42,7 +51,15 @@ def get_unverified_header(token: str) -> dict:
 def verify_token(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> dict:
-    """Verify Auth0 JWT token and return payload"""
+    """
+    Verify Auth0 JWT token and return payload.
+    
+    Returns:
+        dict: JWT payload containing 'sub', 'email', etc.
+    
+    Raises:
+        HTTPException: If token is invalid, expired, or improperly signed.
+    """
     token = credentials.credentials
     
     # Get the key ID from token header
@@ -61,7 +78,7 @@ def verify_token(
             detail="Invalid signing key"
         )
     
-    # Verify token
+    # Verify and decode token
     try:
         payload = jwt.decode(
             token,
