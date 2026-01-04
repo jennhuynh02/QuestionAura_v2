@@ -3,6 +3,7 @@ import { answerService } from "../api/answerService";
 import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
 import styles from "./QuestionCard.module.css";
+import type { UserResponse } from "../api/userService";
 
 interface QuestionCardProps {
   question: QuestionResponse;
@@ -39,14 +40,13 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     });
   };
 
-  const getUserPicture = (user: any) => {
-    if (user?.picture) return user.picture;
-    const name = user?.name || user?.username || user?.email || "User";
+  const getUserPicture = (user: UserResponse) => {
+    const name = user?.username || user?.email || "User";
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
   };
 
-  const getUserName = (user: any) => {
-    return user?.name || user?.username || user?.email || "User";
+  const getUserName = (user: UserResponse) => {
+    return user?.username || user?.email || "User";
   };
 
   return (
@@ -89,4 +89,3 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     </div>
   );
 }
-

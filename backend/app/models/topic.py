@@ -16,6 +16,11 @@ class Topic(Base):
         nullable=False,
     )
 
+    image_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
     # Relationships
     questions: Mapped[list["Question"]] = relationship(
         "Question",

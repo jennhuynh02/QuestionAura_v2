@@ -43,7 +43,10 @@ async def create_topic(
 ):
     """Create a new topic. Requires authentication."""
     try:
-        topic = Topic(name=topic_data.name)
+        topic = Topic(
+            name=topic_data.name,
+            image_url=topic_data.image_url
+        )
         db.add(topic)
         db.commit()
         db.refresh(topic)
@@ -77,6 +80,8 @@ async def update_topic(
     try:
         if topic_data.name is not None:
             topic.name = topic_data.name
+        if topic_data.image_url is not None:
+            topic.image_url = topic_data.image_url
         db.commit()
         db.refresh(topic)
         return topic

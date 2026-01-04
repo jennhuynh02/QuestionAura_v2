@@ -12,19 +12,20 @@ from app.models.question import Question
 from app.models.answer import Answer
 
 # Topics data (matching original seed IDs)
+# Image URLs can be replaced with actual hosted images later
 TOPICS_DATA = [
-    {"id": 1, "name": "Programming"},
-    {"id": 2, "name": "Finance"},
-    {"id": 3, "name": "Books"},
-    {"id": 4, "name": "Criminology"},
-    {"id": 5, "name": "Philosophy"},
-    {"id": 6, "name": "Nature"},
-    {"id": 7, "name": "Psychology"},
-    {"id": 8, "name": "Music"},
-    {"id": 9, "name": "Career"},
-    {"id": 10, "name": "Technology"},
-    {"id": 11, "name": "Art"},
-    {"id": 12, "name": "History"},
+    {"id": 1, "name": "Programming", "image_url": "https://images.unsplash.com/photo-1461749280684-dccba630e2f0?w=400&h=400&fit=crop"},
+    {"id": 2, "name": "Finance", "image_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop"},
+    {"id": 3, "name": "Books", "image_url": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=400&fit=crop"},
+    {"id": 4, "name": "Criminology", "image_url": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=400&fit=crop"},
+    {"id": 5, "name": "Philosophy", "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"},
+    {"id": 6, "name": "Nature", "image_url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop"},
+    {"id": 7, "name": "Psychology", "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=400&fit=crop"},
+    {"id": 8, "name": "Music", "image_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"},
+    {"id": 9, "name": "Career", "image_url": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=400&fit=crop"},
+    {"id": 10, "name": "Technology", "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=400&fit=crop"},
+    {"id": 11, "name": "Art", "image_url": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop"},
+    {"id": 12, "name": "History", "image_url": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop"},
 ]
 
 # Users data (matching original seed IDs)
@@ -158,7 +159,11 @@ def seed_all():
                     topic_id_map[topic_data["id"]] = existing_by_name
                     topics_skipped += 1
                 else:
-                    topic = Topic(id=topic_data["id"], name=topic_data["name"])
+                    topic = Topic(
+                        id=topic_data["id"], 
+                        name=topic_data["name"],
+                        image_url=topic_data.get("image_url")
+                    )
                     db.add(topic)
                     topic_id_map[topic_data["id"]] = topic
                     topics_created += 1

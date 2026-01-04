@@ -112,6 +112,9 @@
   cursor: pointer;
   font-size: 14px;
   color: #636466;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .sidebarItem:hover {
@@ -122,6 +125,14 @@
   background-color: #ffe8e8;
   color: #b92b27;
   font-weight: bold;
+}
+
+.topicIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .content {

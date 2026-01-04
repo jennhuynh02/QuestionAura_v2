@@ -1,9 +1,11 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class TopicBase(BaseModel):
     """Base topic schema with common fields."""
     name: str = Field(..., min_length=1, max_length=255)
+    image_url: Optional[str] = Field(None, max_length=500)
 
 
 class TopicCreate(TopicBase):
@@ -14,6 +16,7 @@ class TopicCreate(TopicBase):
 class TopicUpdate(BaseModel):
     """Schema for updating a topic."""
     name: str | None = Field(None, min_length=1, max_length=255)
+    image_url: Optional[str] = Field(None, max_length=500)
 
 
 class TopicResponse(TopicBase):
@@ -23,3 +26,4 @@ class TopicResponse(TopicBase):
     class Config:
         from_attributes = True
 
+# .

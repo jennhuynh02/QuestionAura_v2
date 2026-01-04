@@ -9,6 +9,39 @@ import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./Home.module.css";
 
+// Import topic images
+import codingImg from "../assets/coding.jpg";
+import financeImg from "../assets/finance.png";
+import booksImg from "../assets/books.png";
+import criminologyImg from "../assets/criminology.png";
+import philosophyImg from "../assets/philosophy.png";
+import natureImg from "../assets/nature.png";
+import psychologyImg from "../assets/psychology.png";
+import musicImg from "../assets/music.png";
+import careerImg from "../assets/career.png";
+import technologyImg from "../assets/technology.png";
+import artImg from "../assets/art.png";
+import historyImg from "../assets/history.png";
+
+// Map topic names to their images
+const getTopicImage = (topicName: string): string => {
+  const imageMap: Record<string, string> = {
+    Programming: codingImg,
+    Finance: financeImg,
+    Books: booksImg,
+    Criminology: criminologyImg,
+    Philosophy: philosophyImg,
+    Nature: natureImg,
+    Psychology: psychologyImg,
+    Music: musicImg,
+    Career: careerImg,
+    Technology: technologyImg,
+    Art: artImg,
+    History: historyImg,
+  };
+  return imageMap[topicName] || "";
+};
+
 export default function Home() {
   const { user, logout, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
@@ -126,17 +159,28 @@ export default function Home() {
           >
             Feed
           </div>
-          {topics.map((topic) => (
-            <div
-              key={topic.id}
-              className={`${styles.sidebarItem} ${
-                selectedTopicId === topic.id ? styles.activeSidebarItem : ""
-              }`}
-              onClick={() => setSelectedTopicId(topic.id)}
-            >
-              {topic.name}
-            </div>
-          ))}
+          {topics.map((topic) => {
+            const topicImage =
+              getTopicImage(topic.name) || topic.image_url || "";
+            return (
+              <div
+                key={topic.id}
+                className={`${styles.sidebarItem} ${
+                  selectedTopicId === topic.id ? styles.activeSidebarItem : ""
+                }`}
+                onClick={() => setSelectedTopicId(topic.id)}
+              >
+                {topicImage && (
+                  <img
+                    src={topicImage}
+                    alt={topic.name}
+                    className={styles.topicIcon}
+                  />
+                )}
+                <span>{topic.name}</span>
+              </div>
+            );
+          })}
         </aside>
 
         {/* Content Feed */}
