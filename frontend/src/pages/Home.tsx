@@ -1,5 +1,12 @@
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import { questionService } from "../api/questionService";
+import { topicService } from "../api/topicService";
+import type { QuestionResponse } from "../api/questionService";
+import type { TopicResponse } from "../api/topicService";
+import QuestionFormModal from "../components/QuestionFormModal";
+import QuestionCard from "../components/QuestionCard";
 import styles from "./Home.module.css";
 
 export default function Home() {
@@ -10,9 +17,47 @@ export default function Home() {
   const demoUserStr = localStorage.getItem("demo_user");
   const isDemoMode = !isAuthenticated && demoUserStr;
   const demoUser = isDemoMode ? JSON.parse(demoUserStr) : null;
-  
+
   const currentUser = isDemoMode ? demoUser : user;
-  
+
+  const [questions, setQuestions] = useState<QuestionResponse[]>([]);
+  const [topics, setTopics] = useState<TopicResponse[]>([]);
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadTopics();
+    loadQuestions();
+  }, [selectedTopicId]);
+
+  const loadTopics = async () => {
+    try {
+      const topicsData = await topicService.getAllTopics();
+      setTopics(topicsData);
+    } catch (err) {
+      console.error("Failed to load topics:", err);
+    }
+  };
+
+  const loadQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const questionsData = await questionService.getAllQuestions(
+        selectedTopicId ? { topic_id: selectedTopicId } : undefined
+      );
+      setQuestions(questionsData);
+    } catch (err) {
+      console.error("Failed to load questions:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleQuestionCreated = () => {
+    loadQuestions();
+  };
+
   const handleLogout = () => {
     if (isDemoMode) {
       localStorage.removeItem("demo_token");
@@ -32,7 +77,12 @@ export default function Home() {
   };
 
   const getUserName = () => {
-    return currentUser?.name || currentUser?.username || currentUser?.email || "User";
+    return (
+      currentUser?.name ||
+      currentUser?.username ||
+      currentUser?.email ||
+      "Guest User"
+    );
   };
 
   return (
@@ -42,24 +92,23 @@ export default function Home() {
         <div className={styles.logo}>Question Aura</div>
         <div className={styles.navIcons}>
           <div className={`${styles.navIcon} ${styles.activeIcon}`}>🏠</div>
-          <div className={styles.navIcon}>📋</div>
-          <div className={styles.navIcon}>📝</div>
-          <div className={styles.navIcon}>👥</div>
-          <div className={styles.navIcon}>🔔</div>
         </div>
         <div className={styles.searchBar}>
           <input type="text" placeholder="Search Question Aura" />
         </div>
         <div className={styles.userActions}>
+          <button
+            className={styles.askQuestionBtn}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Ask Question
+          </button>
           <img
             src={getUserPicture()}
             alt={getUserName()}
             className={styles.profilePic}
           />
-          <button
-            className={styles.logoutBtn}
-            onClick={handleLogout}
-          >
+          <button className={styles.logoutBtn} onClick={handleLogout}>
             Log Out
           </button>
         </div>
@@ -69,49 +118,81 @@ export default function Home() {
       <main className={styles.mainLayout}>
         {/* Left Sidebar */}
         <aside className={styles.sidebar}>
-          <div className={`${styles.sidebarItem} ${styles.activeSidebarItem}`}>
-            + Create Space
+          <div
+            className={`${styles.sidebarItem} ${
+              selectedTopicId === null ? styles.activeSidebarItem : ""
+            }`}
+            onClick={() => setSelectedTopicId(null)}
+          >
+            Feed
           </div>
-          <div className={styles.sidebarItem}>History</div>
-          <div className={styles.sidebarItem}>Economics</div>
-          <div className={styles.sidebarItem}>Science</div>
-          <div className={styles.sidebarItem}>Technology</div>
-          <div className={styles.sidebarItem}>Movies</div>
+          {topics.map((topic) => (
+            <div
+              key={topic.id}
+              className={`${styles.sidebarItem} ${
+                selectedTopicId === topic.id ? styles.activeSidebarItem : ""
+              }`}
+              onClick={() => setSelectedTopicId(topic.id)}
+            >
+              {topic.name}
+            </div>
+          ))}
         </aside>
 
         {/* Content Feed */}
         <div className={styles.content}>
-          <div className={styles.postInput}>
+          <div
+            className={styles.postInput}
+            onClick={() => setIsModalOpen(true)}
+          >
             <div className={styles.postInputPrompt}>
-              <img src={getUserPicture()} alt="" className={styles.profilePic} />
-              <span>What do you want to ask or share?</span>
+              <img
+                src={getUserPicture()}
+                alt=""
+                className={styles.profilePic}
+              />
+              <span>What is your question or link?</span>
             </div>
           </div>
 
           <div className={styles.feed}>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className={styles.skeletonCard}>
-                <div
-                  style={{ display: "flex", gap: "10px", alignItems: "center" }}
-                >
+            {isLoading ? (
+              [1, 2, 3].map((i) => (
+                <div key={i} className={styles.skeletonCard}>
                   <div
-                    className={styles.profilePic}
-                    style={{ width: "24px", height: "24px" }}
-                  ></div>
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      className={styles.profilePic}
+                      style={{ width: "24px", height: "24px" }}
+                    ></div>
+                    <div
+                      className={styles.skeletonText}
+                      style={{ width: "100px" }}
+                    ></div>
+                  </div>
+                  <div className={styles.skeletonTitle}></div>
+                  <div className={styles.skeletonText}></div>
+                  <div className={styles.skeletonText}></div>
                   <div
                     className={styles.skeletonText}
-                    style={{ width: "100px" }}
+                    style={{ width: "40%" }}
                   ></div>
                 </div>
-                <div className={styles.skeletonTitle}></div>
-                <div className={styles.skeletonText}></div>
-                <div className={styles.skeletonText}></div>
-                <div
-                  className={styles.skeletonText}
-                  style={{ width: "40%" }}
-                ></div>
+              ))
+            ) : questions.length > 0 ? (
+              questions.map((question) => (
+                <QuestionCard key={question.id} question={question} />
+              ))
+            ) : (
+              <div className={styles.noQuestions}>
+                No questions yet. Be the first to ask!
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -158,6 +239,15 @@ export default function Home() {
           </div>
         </aside>
       </main>
+
+      {/* Question Form Modal */}
+      <QuestionFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleQuestionCreated}
+        userName={getUserName()}
+        userPicture={getUserPicture()}
+      />
     </div>
   );
 }

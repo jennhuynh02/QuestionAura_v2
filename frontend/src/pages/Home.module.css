@@ -66,6 +66,21 @@
   background-color: #ddd;
 }
 
+.askQuestionBtn {
+  background-color: #b92b27;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.askQuestionBtn:hover {
+  background-color: #a02622;
+}
+
 .logoutBtn {
   background: none;
   border: 1px solid #dee0e1;
@@ -122,6 +137,11 @@
   border-radius: 4px;
   border: 1px solid #dee0e1;
   margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.postInput:hover {
+  border-color: #b92b27;
 }
 
 .postInputPrompt {
@@ -182,4 +202,14 @@
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
   margin-bottom: 10px;
+}
+
+.noQuestions {
+  background: white;
+  padding: 40px;
+  border-radius: 4px;
+  border: 1px solid #dee0e1;
+  text-align: center;
+  color: #939598;
+  font-size: 16px;
 }

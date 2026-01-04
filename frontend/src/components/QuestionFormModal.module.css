@@ -1,0 +1,135 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid #dee0e1;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #282829;
+}
+
+.form {
+  padding: 20px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.userLabel {
+  font-size: 14px;
+  color: #636466;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.topicSelect {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  color: #282829;
+}
+
+.questionInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+  color: #282829;
+}
+
+.questionInput:focus {
+  outline: none;
+  border-color: #b92b27;
+}
+
+.error {
+  color: #b92b27;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancelButton {
+  padding: 8px 16px;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  background: white;
+  color: #636466;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: #f7f7f8;
+}
+
+.submitButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #b92b27;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #a02622;
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
