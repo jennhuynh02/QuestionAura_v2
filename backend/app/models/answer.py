@@ -1,0 +1,58 @@
+from datetime import datetime
+from sqlalchemy import String, Text, DateTime, ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database import Base
+
+
+class Answer(Base):
+    __tablename__ = "answers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    question_id: Mapped[int] = mapped_column(
+        ForeignKey("questions.id"),
+        index=True,
+        nullable=False,
+    )
+
+    response: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+
+    image_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    responder_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        index=True,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    # Relationships
+    question: Mapped["Question"] = relationship(
+        "Question",
+        back_populates="answers"
+    )
+
+    responder: Mapped["User"] = relationship(  # pyright: ignore[reportUndefinedVariable]
+        "User",
+        foreign_keys=[responder_id]
+    )
+
