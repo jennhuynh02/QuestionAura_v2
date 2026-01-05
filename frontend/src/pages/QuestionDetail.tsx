@@ -7,7 +7,9 @@ import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
 import type { UserResponse } from "../api/userService";
 import Loading from "../components/Loading";
+import AnswerFormModal from "../components/AnswerFormModal";
 import styles from "./QuestionDetail.module.css";
+import { AiOutlineMore } from "react-icons/ai";
 
 export default function QuestionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +26,8 @@ export default function QuestionDetail() {
   const [answers, setAnswers] = useState<AnswerResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAnswerModalOpen, setIsAnswerModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const loadAnswers = useCallback(async (questionId: number) => {
     try {
@@ -89,6 +93,53 @@ export default function QuestionDetail() {
       year: "numeric",
     });
   };
+
+  const getUserPictureDisplay = () => {
+    if (currentUser?.picture) return currentUser.picture;
+    if (isDemoMode && currentUser?.username) {
+      return `https://ui-avatars.com/api/?name=${currentUser.username}`;
+    }
+    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
+  };
+
+  const getUserNameDisplay = () => {
+    return (
+      currentUser?.name ||
+      currentUser?.username ||
+      currentUser?.email ||
+      "Guest User"
+    );
+  };
+
+  const handleDropdownToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleAnswerClick = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setIsDropdownOpen(false);
+    setIsAnswerModalOpen(true);
+  };
+
+  const handleAnswerSubmitted = () => {
+    if (question) {
+      loadAnswers(question.id);
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (isDropdownOpen) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [isDropdownOpen]);
 
   if (isLoading) {
     return <Loading />;
@@ -173,22 +224,53 @@ export default function QuestionDetail() {
 
         <div className={styles.questionCard}>
           <div className={styles.questionHeader}>
-            <div className={styles.topicBadge}>{question.topic.name}</div>
-            <div className={styles.questionText}>{question.ask}</div>
-            <div className={styles.questionMeta}>
-              <span className={styles.questionAuthor}>
-                {getUserName(question.asker)}
-              </span>
-              <span className={styles.questionDate}>
-                asked {formatDate(question.created_at)}
-              </span>
+            <div className={styles.questionHeaderTop}>
+              <div>
+                <div className={styles.topicBadge}>{question.topic.name}</div>
+                <div className={styles.questionText}>{question.ask}</div>
+                <div className={styles.questionMeta}>
+                  <span className={styles.questionAuthor}>
+                    {getUserName(question.asker)}
+                  </span>
+                  <span className={styles.questionDate}>
+                    asked {formatDate(question.created_at)}
+                  </span>
+                </div>
+              </div>
+              <div className={styles.dropdownContainer}>
+                <button
+                  className={styles.dropdownButton}
+                  onClick={handleDropdownToggle}
+                  aria-label="More options"
+                >
+                  <AiOutlineMore size={20} />
+                </button>
+                {isDropdownOpen && (
+                  <div className={styles.dropdownMenu}>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={handleAnswerClick}
+                    >
+                      Answer
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           <div className={styles.answersSection}>
-            <h3 className={styles.answersTitle}>
-              {answers.length} {answers.length === 1 ? "Answer" : "Answers"}
-            </h3>
+            <div className={styles.answersHeader}>
+              <h3 className={styles.answersTitle}>
+                {answers.length} {answers.length === 1 ? "Answer" : "Answers"}
+              </h3>
+              <button
+                className={styles.answerButton}
+                onClick={() => handleAnswerClick()}
+              >
+                Answer Question
+              </button>
+            </div>
             {answers.length > 0 ? (
               answers.map((answer) => (
                 <div key={answer.id} className={styles.answer}>
@@ -218,6 +300,14 @@ export default function QuestionDetail() {
           </div>
         </div>
       </main>
+
+      <AnswerFormModal
+        isOpen={isAnswerModalOpen}
+        onClose={() => setIsAnswerModalOpen(false)}
+        onSubmit={handleAnswerSubmitted}
+        userName={getUserNameDisplay()}
+        questionId={question.id}
+      />
     </div>
   );
 }
