@@ -48,12 +48,87 @@ def get_unverified_header(token: str) -> dict:
         )
 
 
+def _verify_demo_token(token: str) -> dict:
+    """Verify demo token (HS256) and return payload."""
+    demo_secret = os.getenv("DEMO_JWT_SECRET", "demo-secret-key-change-in-production")
+    
+    try:
+        payload = jwt.decode(
+            token,
+            demo_secret,
+            algorithms=["HS256"],
+            options={"verify_aud": False}
+        )
+        
+        if not payload.get("demo"):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid demo token: missing demo flag"
+            )
+        
+        return payload
+    
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Demo token has expired"
+        )
+    except JWTError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid demo token: {str(e)}"
+        )
+
+
+def _verify_auth0_token(token: str, unverified_header: dict) -> dict:
+    """Verify Auth0 token (RS256) and return payload."""
+    # Validate required 'kid' field
+    kid = unverified_header.get("kid")
+    if not kid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Auth0 token: missing key ID"
+        )
+    
+    # Find matching RSA key
+    jwks = get_jwks()
+    rsa_key = next(
+        (key for key in jwks["keys"] if key["kid"] == kid),
+        None
+    )
+    
+    if not rsa_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid signing key"
+        )
+    
+    # Verify and decode
+    try:
+        return jwt.decode(
+            token,
+            rsa_key,
+            algorithms=["RS256"],
+            audience=API_AUDIENCE,
+            issuer=ISSUER,
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired"
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
+
+
 def verify_token(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> dict:
     """
-    Verify Auth0 JWT token and return payload.
-    Also accepts demo tokens for demo user access.
+    Verify JWT token (Auth0 or demo) and return payload.
     
     Returns:
         dict: JWT payload containing 'sub', 'email', etc.
@@ -62,58 +137,10 @@ def verify_token(
         HTTPException: If token is invalid, expired, or improperly signed.
     """
     token = credentials.credentials
-    
-    # Try to decode as demo token first (for demo user)
-    try:
-        demo_secret = os.getenv("DEMO_JWT_SECRET", "demo-secret-key-change-in-production")
-        payload = jwt.decode(
-            token,
-            demo_secret,
-            algorithms=["HS256"],
-            options={"verify_aud": False}  # Demo tokens may not have exact audience
-        )
-        # If it has the demo flag, it's a valid demo token
-        if payload.get("demo") is True:
-            return payload
-    except JWTError:
-        # Not a demo token, continue to Auth0 verification
-        pass
-    
-    # Get the key ID from token header
     unverified_header = get_unverified_header(token)
     
-    # Find matching key in JWKS
-    jwks = get_jwks()
-    rsa_key = next(
-        (key for key in jwks["keys"] if key["kid"] == unverified_header["kid"]),
-        None
-    )
+    # Route to appropriate verification based on algorithm
+    if unverified_header.get("alg") == "HS256":
+        return _verify_demo_token(token)
     
-    if rsa_key is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid signing key"
-        )
-    
-    # Verify and decode token
-    try:
-        payload = jwt.decode(
-            token,
-            rsa_key,
-            algorithms=["RS256"],
-            audience=API_AUDIENCE,
-            issuer=ISSUER,
-        )
-        return payload
-    
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired"
-        )
-    
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
-        )
+    return _verify_auth0_token(token, unverified_header)
