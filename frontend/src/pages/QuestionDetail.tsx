@@ -19,7 +19,9 @@ export default function QuestionDetail() {
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
   const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser = isDemoMode ? JSON.parse(demoUserStr) : null;
+  const demoUser: UserResponse | null = isDemoMode
+    ? JSON.parse(demoUserStr)
+    : null;
   const currentUser = isDemoMode ? demoUser : user;
 
   const [question, setQuestion] = useState<QuestionResponse | null>(null);
@@ -73,15 +75,19 @@ export default function QuestionDetail() {
     }
   };
 
-  const getUserPicture = (user?: UserResponse) => {
-    if (user?.username || user?.email) {
-      const name = user?.username || user?.email || "User";
+  const getUserPicture = (
+    user?: UserResponse | { username?: string; email?: string } | null
+  ) => {
+    if (user) {
+      const name = user.username || user.email || "User";
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
     }
     return `https://ui-avatars.com/api/?name=User`;
   };
 
-  const getUserName = (user?: UserResponse) => {
+  const getUserName = (
+    user?: UserResponse | { username?: string; email?: string } | null
+  ) => {
     return user?.username || user?.email || "User";
   };
 
@@ -94,21 +100,15 @@ export default function QuestionDetail() {
     });
   };
 
-  const getUserPictureDisplay = () => {
-    if (currentUser?.picture) return currentUser.picture;
-    if (isDemoMode && currentUser?.username) {
-      return `https://ui-avatars.com/api/?name=${currentUser.username}`;
-    }
-    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
-  };
-
   const getUserNameDisplay = () => {
-    return (
-      currentUser?.name ||
-      currentUser?.username ||
-      currentUser?.email ||
-      "Guest User"
-    );
+    if (!currentUser) return "Guest User";
+
+    // Auth0 User type has name property, UserResponse has username
+    if ("name" in currentUser && currentUser.name) {
+      return currentUser.name;
+    }
+
+    return currentUser.username || currentUser.email || "Guest User";
   };
 
   const handleDropdownToggle = (e: React.MouseEvent) => {
@@ -225,9 +225,14 @@ export default function QuestionDetail() {
         <div className={styles.questionCard}>
           <div className={styles.questionHeader}>
             <div className={styles.questionHeaderTop}>
-              <div>
+              <div className={styles.questionCardContent}>
                 <div className={styles.topicBadge}>{question.topic.name}</div>
                 <div className={styles.questionText}>{question.ask}</div>
+                {question.image_url && (
+                  <div className={styles.questionImage}>
+                    <img src={question.image_url} alt="Question attachment" />
+                  </div>
+                )}
                 <div className={styles.questionMeta}>
                   <span className={styles.questionAuthor}>
                     {getUserName(question.asker)}
@@ -290,6 +295,11 @@ export default function QuestionDetail() {
                     </div>
                   </div>
                   <div className={styles.answerContent}>{answer.response}</div>
+                  {answer.image_url && (
+                    <div className={styles.answerImage}>
+                      <img src={answer.image_url} alt="Answer attachment" />
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

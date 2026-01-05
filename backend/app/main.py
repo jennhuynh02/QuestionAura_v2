@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.database import engine
 from app.auth import verify_token
-from app.routes import users_router, auth_router, topics_router, questions_router, answers_router
+from app.routes import users_router, auth_router, topics_router, questions_router, answers_router, upload_router
 
 load_dotenv()
 
@@ -26,6 +26,7 @@ app.include_router(auth_router)
 app.include_router(topics_router)
 app.include_router(questions_router)
 app.include_router(answers_router)
+app.include_router(upload_router)
 
 
 @app.get("/protected")

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Welcome.module.css";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { userService, type UserCreate } from "../api/userService";
+import { getErrorMessage } from "../types/errors";
 
 type PendingSignupData = {
   auth0_id: string;
@@ -136,8 +137,7 @@ export default function Welcome() {
 
       setError(
         isDuplicateUser
-          ? apiError.response?.data?.detail ||
-              "Username or email already exists"
+          ? getErrorMessage(err, "Username or email already exists")
           : "Failed to sync account. Please try again."
       );
     } finally {

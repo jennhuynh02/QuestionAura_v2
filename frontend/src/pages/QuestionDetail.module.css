@@ -199,6 +199,28 @@
   line-height: 1.4;
 }
 
+.questionCardContent {
+  width: 100%;
+}
+
+.questionImage {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #dee0e1;
+  display: flex;
+  justify-content: center;
+  background-color: #f7f7f8;
+}
+
+.questionImage img {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
+}
+
 .questionMeta {
   display: flex;
   align-items: center;
@@ -298,6 +320,22 @@
   line-height: 1.6;
   margin-left: 42px;
   white-space: pre-wrap;
+}
+
+.answerImage {
+  margin-top: 12px;
+  margin-left: 42px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #dee0e1;
+}
+
+.answerImage img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  background-color: #f7f7f8;
 }
 
 .noAnswers {

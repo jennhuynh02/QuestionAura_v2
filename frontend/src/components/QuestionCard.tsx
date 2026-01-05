@@ -24,7 +24,9 @@ export default function QuestionCard({ question }: QuestionCardProps) {
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
   const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser = isDemoMode ? JSON.parse(demoUserStr) : null;
+  const demoUser: UserResponse | null = isDemoMode
+    ? JSON.parse(demoUserStr)
+    : null;
   const currentUser = isDemoMode ? demoUser : user;
 
   const loadAnswers = useCallback(async () => {
@@ -75,12 +77,14 @@ export default function QuestionCard({ question }: QuestionCardProps) {
   };
 
   const getUserNameDisplay = () => {
-    return (
-      currentUser?.name ||
-      currentUser?.username ||
-      currentUser?.email ||
-      "Guest User"
-    );
+    if (!currentUser) return "Guest User";
+
+    // Auth0 User type has name property, UserResponse has username
+    if ("name" in currentUser && currentUser.name) {
+      return currentUser.name;
+    }
+
+    return currentUser.username || currentUser.email || "Guest User";
   };
 
   const handleCardClick = () => {
@@ -128,6 +132,11 @@ export default function QuestionCard({ question }: QuestionCardProps) {
               )}
             </div>
           </div>
+          {question.image_url && (
+            <div className={styles.questionImage}>
+              <img src={question.image_url} alt="Question attachment" />
+            </div>
+          )}
           <div className={styles.topicBadge}>{question.topic.name}</div>
         </div>
 
@@ -150,6 +159,11 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                 </div>
               </div>
               <div className={styles.answerContent}>{answers[0].response}</div>
+              {answers[0].image_url && (
+                <div className={styles.answerImage}>
+                  <img src={answers[0].image_url} alt="Answer attachment" />
+                </div>
+              )}
             </div>
           </div>
         )}

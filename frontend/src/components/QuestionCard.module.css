@@ -27,6 +27,22 @@
   flex: 1;
 }
 
+.questionImage {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #dee0e1;
+}
+
+.questionImage img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  background-color: #f7f7f8;
+}
+
 .dropdownContainer {
   position: relative;
 }
@@ -147,6 +163,22 @@
   line-height: 1.6;
   margin-left: 34px;
   white-space: pre-wrap;
+}
+
+.answerImage {
+  margin-top: 12px;
+  margin-left: 34px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #dee0e1;
+}
+
+.answerImage img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+  background-color: #f7f7f8;
 }
 
 .noAnswers {

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
+import { uploadService } from "../api/uploadService";
+import { getErrorMessage } from "../types/errors";
 import type { QuestionCreate } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
 import styles from "./QuestionFormModal.module.css";
@@ -25,6 +27,9 @@ export default function QuestionFormModal({
   const [topics, setTopics] = useState<TopicResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,6 +50,40 @@ export default function QuestionFormModal({
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Invalid file type. Please select a JPEG, PNG, GIF, or WebP image.");
+        return;
+      }
+
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setError("File size exceeds 5MB. Please select a smaller image.");
+        return;
+      }
+
+      setSelectedFile(file);
+      setError(null);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -62,20 +101,39 @@ export default function QuestionFormModal({
     setError(null);
 
     try {
+      let imageUrl: string | null = null;
+
+      // Upload image if selected
+      if (selectedFile) {
+        setIsUploading(true);
+        try {
+          imageUrl = await uploadService.uploadImage(selectedFile);
+        } catch (uploadErr: unknown) {
+          console.error("Failed to upload image:", uploadErr);
+          setError(getErrorMessage(uploadErr, "Failed to upload image"));
+          setIsLoading(false);
+          setIsUploading(false);
+          return;
+        }
+        setIsUploading(false);
+      }
+
       const questionData: QuestionCreate = {
         topic_id: selectedTopicId,
         ask: questionText.trim(),
-        image_url: null,
+        image_url: imageUrl,
       };
 
       await questionService.createQuestion(questionData);
       setQuestionText("");
       setSelectedTopicId(topics.length > 0 ? topics[0].id : null);
+      setSelectedFile(null);
+      setImagePreview(null);
       onSubmit();
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to create question:", err);
-      setError(err.response?.data?.detail || "Failed to create question");
+      setError(getErrorMessage(err, "Failed to create question"));
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +142,8 @@ export default function QuestionFormModal({
   const handleCancel = () => {
     setQuestionText("");
     setError(null);
+    setSelectedFile(null);
+    setImagePreview(null);
     onClose();
   };
 
@@ -129,6 +189,36 @@ export default function QuestionFormModal({
             />
           </div>
 
+          <div className={styles.formGroup}>
+            <label className={styles.fileLabel}>
+              <input
+                type="file"
+                className={styles.fileInput}
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                onChange={handleFileChange}
+                disabled={isLoading}
+              />
+              <span className={styles.fileButton}>Choose Image</span>
+              <span className={styles.fileText}>
+                {selectedFile ? selectedFile.name : "No file chosen"}
+              </span>
+            </label>
+          </div>
+
+          {imagePreview && (
+            <div className={styles.imagePreview}>
+              <img src={imagePreview} alt="Preview" className={styles.previewImage} />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className={styles.removeImageButton}
+                disabled={isLoading}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.modalActions}>
@@ -145,7 +235,7 @@ export default function QuestionFormModal({
               className={styles.submitButton}
               disabled={isLoading}
             >
-              {isLoading ? "Adding..." : "Add Question"}
+              {isUploading ? "Uploading image..." : isLoading ? "Adding..." : "Add Question"}
             </button>
           </div>
         </form>

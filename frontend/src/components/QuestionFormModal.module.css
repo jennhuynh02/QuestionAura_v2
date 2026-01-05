@@ -133,3 +133,78 @@
   cursor: not-allowed;
 }
 
+.fileLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileButton {
+  padding: 8px 16px;
+  border: 1px solid #dee0e1;
+  border-radius: 4px;
+  background: white;
+  color: #636466;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fileButton:hover {
+  background-color: #f7f7f8;
+}
+
+.fileText {
+  font-size: 14px;
+  color: #636466;
+}
+
+.imagePreview {
+  position: relative;
+  margin-bottom: 20px;
+  display: inline-block;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #dee0e1;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(185, 43, 39, 0.9);
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background-color 0.2s;
+}
+
+.removeImageButton:hover:not(:disabled) {
+  background-color: rgba(160, 38, 34, 0.9);
+}
+
+.removeImageButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

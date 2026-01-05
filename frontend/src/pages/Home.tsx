@@ -5,6 +5,7 @@ import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
+import type { UserResponse } from "../api/userService";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./Home.module.css";
@@ -49,7 +50,9 @@ export default function Home() {
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
   const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser = isDemoMode ? JSON.parse(demoUserStr) : null;
+  const demoUser: UserResponse | null = isDemoMode 
+    ? JSON.parse(demoUserStr) as UserResponse 
+    : null;
 
   const currentUser = isDemoMode ? demoUser : user;
 
