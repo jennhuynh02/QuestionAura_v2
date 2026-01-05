@@ -11,7 +11,7 @@
   background-color: white;
   display: flex;
   align-items: center;
-  padding: 0 60px;
+  padding: 0 60px 0 40px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
@@ -58,11 +58,63 @@
   flex-shrink: 0;
 }
 
+.userDropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .profilePic {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   background-color: #ddd;
+  transition: opacity 0.2s ease;
+}
+
+.profilePic:hover {
+  opacity: 0.8;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #dee0e1;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdownMenu::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #282829;
+  transition: background-color 0.2s ease;
+  display: block;
+}
+
+.dropdownItem:hover {
+  background-color: #f7f7f8;
 }
 
 .askQuestionBtn {
@@ -84,28 +136,10 @@
   box-shadow: 0 2px 4px rgba(185, 43, 39, 0.2);
 }
 
-.logoutBtn {
-  background: white;
-  border: 1px solid #dee0e1;
-  padding: 8px 18px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13px;
-  color: #636466;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.logoutBtn:hover {
-  border-color: #b92b27;
-  color: #b92b27;
-  background-color: #fff5f5;
-}
-
 .mainLayout {
   display: flex;
-  max-width: 1200px;
-  margin: 20px auto;
+  max-width: 1400px;
+  margin: 20px 0 20px 20px;
   width: 100%;
   gap: 24px;
   padding: 0 20px;
@@ -116,6 +150,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: sticky;
+  top: 80px;
+  align-self: flex-start;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 .sidebarItem {
@@ -160,14 +199,16 @@
   padding: 16px;
   border-radius: 8px;
   border: 1px solid #dee0e1;
-  cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .postInput:hover {
-  border-color: #b92b27;
-  box-shadow: 0 2px 4px rgba(185, 43, 39, 0.08);
+  border-color: #b9b9b9;
 }
 
 .postInputPrompt {
@@ -176,7 +217,7 @@
   gap: 12px;
   color: #939598;
   font-size: 15px;
-  cursor: text;
+  flex: 1;
 }
 
 .feed {
@@ -219,7 +260,7 @@
 }
 
 .rightSidebar {
-  width: 250px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -240,6 +281,11 @@
   padding-bottom: 10px;
   margin-bottom: 12px;
   color: #282829;
+}
+
+.calendlyWidget {
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Pagination */

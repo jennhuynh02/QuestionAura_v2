@@ -143,5 +143,12 @@ vite.config.ts.timestamp-*
 *.py[cod]
 *$py.class
 
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+path/
+
 # OS files
 .DS_Store

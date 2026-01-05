@@ -61,6 +61,7 @@ export default function Home() {
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -162,20 +163,25 @@ export default function Home() {
           <input type="text" placeholder="Search Question Aura" />
         </div>
         <div className={styles.userActions}>
-          <button
-            className={styles.askQuestionBtn}
-            onClick={() => setIsModalOpen(true)}
+          <div
+            className={styles.userDropdown}
+            onMouseEnter={() => setIsUserDropdownOpen(true)}
+            onMouseLeave={() => setIsUserDropdownOpen(false)}
           >
-            Ask Question
-          </button>
-          <img
-            src={getUserPicture()}
-            alt={getUserName()}
-            className={styles.profilePic}
-          />
-          <button className={styles.logoutBtn} onClick={handleLogout}>
-            Log Out
-          </button>
+            <img
+              src={getUserPicture()}
+              alt={getUserName()}
+              className={styles.profilePic}
+              style={{ cursor: "pointer" }}
+            />
+            {isUserDropdownOpen && (
+              <div className={styles.dropdownMenu}>
+                <button className={styles.dropdownItem} onClick={handleLogout}>
+                  Log Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -189,7 +195,7 @@ export default function Home() {
             }`}
             onClick={() => handleTopicSelect(null)}
           >
-            Feed
+            Dashboard
           </div>
           {topics.map((topic) => {
             const topicImage =
@@ -217,18 +223,21 @@ export default function Home() {
 
         {/* Content Feed */}
         <div className={styles.content}>
-          <div
-            className={styles.postInput}
-            onClick={() => setIsModalOpen(true)}
-          >
+          <div className={styles.postInput}>
             <div className={styles.postInputPrompt}>
               <img
                 src={getUserPicture()}
                 alt=""
                 className={styles.profilePic}
               />
-              <span>What is your question or link?</span>
+              <span>What is your question?</span>
             </div>
+            <button
+              className={styles.askQuestionBtn}
+              onClick={() => setIsModalOpen(true)}
+            >
+              Ask Question
+            </button>
           </div>
 
           <div className={styles.feed}>
@@ -298,42 +307,15 @@ export default function Home() {
         {/* Right Sidebar */}
         <aside className={styles.rightSidebar}>
           <div className={styles.widget}>
-            <div className={styles.widgetTitle}>Improve Your Feed</div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              <div className={styles.skeletonText}></div>
-              <div className={styles.skeletonText}></div>
-              <div className={styles.skeletonText}></div>
-            </div>
-          </div>
-          <div className={styles.widget}>
-            <div className={styles.widgetTitle}>Space to Follow</div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-            >
-              {[1, 2].map((i) => (
-                <div key={i} style={{ display: "flex", gap: "10px" }}>
-                  <div
-                    className={styles.profilePic}
-                    style={{ borderRadius: "4px" }}
-                  ></div>
-                  <div
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                    }}
-                  >
-                    <div className={styles.skeletonText}></div>
-                    <div
-                      className={styles.skeletonText}
-                      style={{ width: "60%" }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+            <div className={styles.widgetTitle}>Schedule a Meeting</div>
+            <div className={styles.calendlyWidget}>
+              <iframe
+                src="https://calendly.com/jenniferhuynh123/30min"
+                width="100%"
+                height="700"
+                frameBorder="0"
+                title="Schedule a meeting"
+              ></iframe>
             </div>
           </div>
         </aside>
