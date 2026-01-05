@@ -131,6 +131,7 @@ export interface paths {
          *
          *     - **topic_id**: Filter by topic
          *     - **asker_id**: Filter by question author
+         *     - **search**: Search questions by text content
          *     - **page**: Page number (starts at 1)
          *     - **page_size**: Number of items per page (max 100)
          */
@@ -783,6 +784,8 @@ export interface operations {
                 topic_id?: number | null;
                 /** @description Filter by asker ID */
                 asker_id?: number | null;
+                /** @description Search questions by text */
+                search?: string | null;
                 /** @description Page number (starts at 1) */
                 page?: number;
                 /** @description Items per page (max 100) */

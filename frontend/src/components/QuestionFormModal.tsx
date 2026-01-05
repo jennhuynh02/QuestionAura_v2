@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
-import { uploadService, validateImageFile, IMAGE_UPLOAD_LIMITS } from "../api/uploadService";
+import {
+  uploadService,
+  validateImageFile,
+  IMAGE_UPLOAD_LIMITS,
+} from "../api/uploadService";
 import { getErrorMessage } from "../types/errors";
 import type { QuestionCreate } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
@@ -13,6 +17,7 @@ interface QuestionFormModalProps {
   onSubmit: () => void;
   userName: string;
   userPicture: string;
+  defaultTopicId?: number;
 }
 
 export default function QuestionFormModal({
@@ -21,6 +26,7 @@ export default function QuestionFormModal({
   onSubmit,
   userName,
   userPicture,
+  defaultTopicId,
 }: QuestionFormModalProps) {
   const [questionText, setQuestionText] = useState("");
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
@@ -31,24 +37,29 @@ export default function QuestionFormModal({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadTopics();
-    }
-  }, [isOpen]);
-
-  const loadTopics = async () => {
+  const loadTopics = useCallback(async () => {
     try {
       const topicsData = await topicService.getAllTopics();
       setTopics(topicsData);
-      if (topicsData.length > 0 && !selectedTopicId) {
-        setSelectedTopicId(topicsData[0].id);
+      if (!selectedTopicId) {
+        // Use defaultTopicId if provided, otherwise use first topic
+        if (defaultTopicId) {
+          setSelectedTopicId(defaultTopicId);
+        } else if (topicsData.length > 0) {
+          setSelectedTopicId(topicsData[0].id);
+        }
       }
     } catch (err) {
       console.error("Failed to load topics:", err);
       setError("Failed to load topics");
     }
-  };
+  }, [selectedTopicId, defaultTopicId]);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadTopics();
+    }
+  }, [isOpen, loadTopics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,7 +91,7 @@ export default function QuestionFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!questionText.trim()) {
       setError("Please enter a question");
       return;
@@ -149,10 +160,14 @@ export default function QuestionFormModal({
         <div className={styles.modalHeader}>
           <h2>Question Form</h2>
         </div>
-        
+
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.userInfo}>
-            <img src={userPicture} alt={userName} className={styles.userAvatar} />
+            <img
+              src={userPicture}
+              alt={userName}
+              className={styles.userAvatar}
+            />
             <span className={styles.userLabel}>{userName} asked.</span>
           </div>
 
@@ -198,13 +213,18 @@ export default function QuestionFormModal({
               </span>
             </label>
             <div className={styles.fileHint}>
-              Max {IMAGE_UPLOAD_LIMITS.maxSizeMB}MB • {IMAGE_UPLOAD_LIMITS.displayFormats}
+              Max {IMAGE_UPLOAD_LIMITS.maxSizeMB}MB •{" "}
+              {IMAGE_UPLOAD_LIMITS.displayFormats}
             </div>
           </div>
 
           {imagePreview && (
             <div className={styles.imagePreview}>
-              <img src={imagePreview} alt="Preview" className={styles.previewImage} />
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className={styles.previewImage}
+              />
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -232,7 +252,11 @@ export default function QuestionFormModal({
               className={styles.submitButton}
               disabled={isLoading}
             >
-              {isUploading ? "Uploading image..." : isLoading ? "Adding..." : "Add Question"}
+              {isUploading
+                ? "Uploading image..."
+                : isLoading
+                ? "Adding..."
+                : "Add Question"}
             </button>
           </div>
         </form>
@@ -240,4 +264,3 @@ export default function QuestionFormModal({
     </div>
   );
 }
-

@@ -3,6 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Home from "./pages/Home";
 import Welcome from "./pages/Welcome";
 import QuestionDetail from "./pages/QuestionDetail";
+import TopicDetail from "./pages/TopicDetail";
 import Loading from "./components/Loading";
 
 function App() {
@@ -31,6 +32,16 @@ function App() {
           element={
             isAuthenticated || isDemoAuthenticated ? (
               <QuestionDetail />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/topic/:id"
+          element={
+            isAuthenticated || isDemoAuthenticated ? (
+              <TopicDetail />
             ) : (
               <Navigate to="/login" />
             )

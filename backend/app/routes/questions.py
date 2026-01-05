@@ -15,6 +15,7 @@ router = APIRouter(prefix="/questions", tags=["questions"])
 async def get_all_questions(
     topic_id: Optional[int] = Query(None, description="Filter by topic ID"),
     asker_id: Optional[int] = Query(None, description="Filter by asker ID"),
+    search: Optional[str] = Query(None, description="Search questions by text"),
     page: int = Query(1, ge=1, description="Page number (starts at 1)"),
     page_size: int = Query(10, ge=1, le=100, description="Items per page (max 100)"),
     db: Session = Depends(get_db)
@@ -24,6 +25,7 @@ async def get_all_questions(
     
     - **topic_id**: Filter by topic
     - **asker_id**: Filter by question author
+    - **search**: Search questions by text content
     - **page**: Page number (starts at 1)
     - **page_size**: Number of items per page (max 100)
     """
@@ -39,6 +41,10 @@ async def get_all_questions(
     
     if asker_id is not None:
         query = query.filter(Question.asker_id == asker_id)
+    
+    if search is not None and search.strip():
+        search_term = f"%{search.strip()}%"
+        query = query.filter(Question.ask.ilike(search_term))
     
     # Get total count before pagination
     total = query.count()
