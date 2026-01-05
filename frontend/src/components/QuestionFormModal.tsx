@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
-import { uploadService } from "../api/uploadService";
+import { uploadService, validateImageFile, IMAGE_UPLOAD_LIMITS } from "../api/uploadService";
 import { getErrorMessage } from "../types/errors";
 import type { QuestionCreate } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
@@ -53,17 +53,11 @@ export default function QuestionFormModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
-      if (!allowedTypes.includes(file.type)) {
-        setError("Invalid file type. Please select a JPEG, PNG, GIF, or WebP image.");
-        return;
-      }
-
-      // Validate file size (5MB max)
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        setError("File size exceeds 5MB. Please select a smaller image.");
+      // Validate file using shared validation logic
+      const validation = validateImageFile(file);
+      if (!validation.isValid) {
+        setError(validation.error);
+        e.target.value = ""; // Reset input
         return;
       }
 
@@ -203,6 +197,9 @@ export default function QuestionFormModal({
                 {selectedFile ? selectedFile.name : "No file chosen"}
               </span>
             </label>
+            <div className={styles.fileHint}>
+              Max {IMAGE_UPLOAD_LIMITS.maxSizeMB}MB • {IMAGE_UPLOAD_LIMITS.displayFormats}
+            </div>
           </div>
 
           {imagePreview && (
