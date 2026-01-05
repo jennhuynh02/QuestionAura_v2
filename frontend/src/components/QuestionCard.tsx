@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { answerService } from "../api/answerService";
 import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
@@ -10,14 +11,11 @@ interface QuestionCardProps {
 }
 
 export default function QuestionCard({ question }: QuestionCardProps) {
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState<AnswerResponse[]>([]);
   const [isLoadingAnswers, setIsLoadingAnswers] = useState(false);
 
-  useEffect(() => {
-    loadAnswers();
-  }, [question.id]);
-
-  const loadAnswers = async () => {
+  const loadAnswers = useCallback(async () => {
     setIsLoadingAnswers(true);
     try {
       const answersData = await answerService.getAllAnswers({
@@ -29,7 +27,11 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     } finally {
       setIsLoadingAnswers(false);
     }
-  };
+  }, [question.id]);
+
+  useEffect(() => {
+    loadAnswers();
+  }, [loadAnswers]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -49,8 +51,12 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     return user?.username || user?.email || "User";
   };
 
+  const handleCardClick = () => {
+    navigate(`/question/${question.id}`);
+  };
+
   return (
-    <div className={styles.questionCard}>
+    <div className={styles.questionCard} onClick={handleCardClick}>
       <div className={styles.questionHeader}>
         <div className={styles.questionText}>{question.ask}</div>
         <div className={styles.topicBadge}>{question.topic.name}</div>
@@ -58,26 +64,24 @@ export default function QuestionCard({ question }: QuestionCardProps) {
 
       {answers.length > 0 && (
         <div className={styles.answersSection}>
-          {answers.map((answer) => (
-            <div key={answer.id} className={styles.answer}>
-              <div className={styles.answerHeader}>
-                <img
-                  src={getUserPicture(answer.responder)}
-                  alt={getUserName(answer.responder)}
-                  className={styles.answerAvatar}
-                />
-                <div className={styles.answerMeta}>
-                  <span className={styles.answerAuthor}>
-                    {getUserName(answer.responder)}
-                  </span>
-                  <span className={styles.answerDate}>
-                    updated {formatDate(answer.updated_at)}
-                  </span>
-                </div>
+          <div className={styles.answer}>
+            <div className={styles.answerHeader}>
+              <img
+                src={getUserPicture(answers[0].responder)}
+                alt={getUserName(answers[0].responder)}
+                className={styles.answerAvatar}
+              />
+              <div className={styles.answerMeta}>
+                <span className={styles.answerAuthor}>
+                  {getUserName(answers[0].responder)}
+                </span>
+                <span className={styles.answerDate}>
+                  updated {formatDate(answers[0].updated_at)}
+                </span>
               </div>
-              <div className={styles.answerContent}>{answer.response}</div>
             </div>
-          ))}
+            <div className={styles.answerContent}>{answers[0].response}</div>
+          </div>
         </div>
       )}
 

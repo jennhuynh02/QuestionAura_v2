@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import Home from "./pages/Home";
 import Welcome from "./pages/Welcome";
+import QuestionDetail from "./pages/QuestionDetail";
 import Loading from "./components/Loading";
 
 function App() {
@@ -20,6 +21,16 @@ function App() {
           element={
             isAuthenticated || isDemoAuthenticated ? (
               <Home />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/question/:id"
+          element={
+            isAuthenticated || isDemoAuthenticated ? (
+              <QuestionDetail />
             ) : (
               <Navigate to="/login" />
             )
