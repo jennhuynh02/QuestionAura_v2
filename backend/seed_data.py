@@ -1,20 +1,18 @@
 """
-Seed script to populate the database with sample data from the original QuestionAura.
-This script creates users, topics, questions, and answers based on the original Ruby seed file.
-Run this script to populate the database with sample data.
+Seed script to populate the database with sample data.
+Run: python seed_data.py [--reset]
 """
 import sys
+import argparse
 from sqlalchemy import func, text
-from app.database import SessionLocal
+from app.database import SessionLocal, Base, engine
 from app.models.user import User
 from app.models.topic import Topic
 from app.models.question import Question
 from app.models.answer import Answer
 
-# Topics data (matching original seed IDs)
-# Image URLs can be replaced with actual hosted images later
-TOPICS_DATA = [
-    {"id": 1, "name": "Programming", "image_url": "https://images.unsplash.com/photo-1461749280684-dccba630e2f0?w=400&h=400&fit=crop"},
+TOPICS = [
+    {"id": 1, "name": "Programming", "image_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop"},
     {"id": 2, "name": "Finance", "image_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop"},
     {"id": 3, "name": "Books", "image_url": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=400&fit=crop"},
     {"id": 4, "name": "Criminology", "image_url": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=400&fit=crop"},
@@ -28,24 +26,23 @@ TOPICS_DATA = [
     {"id": 12, "name": "History", "image_url": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop"},
 ]
 
-# Users data (matching original seed IDs)
-USERS_DATA = [
-    {"id": 101, "first_name": "Guest", "last_name": "User", "email": "guestuser@questionaura.com"},
-    {"id": 102, "first_name": "Isaac", "last_name": "Newdon", "email": "isaacstein@gmail.com"},
-    {"id": 103, "first_name": "Wayne", "last_name": "Brazy", "email": "allthewayne@yahoo.com"},
-    {"id": 104, "first_name": "James", "last_name": "Bands", "email": "jayjames@hotmail.com"},
-    {"id": 105, "first_name": "Darrick", "last_name": "Yawns", "email": "imthedad@me.com"},
-    {"id": 106, "first_name": "Miguel", "last_name": "Juan", "email": "jmiggs@hello.com"},
-    {"id": 107, "first_name": "Chef", "last_name": "Lean", "email": "shaphen@gmail.com"},
-    {"id": 108, "first_name": "Charles", "last_name": "Choose", "email": "charles@dude.com"},
-    {"id": 109, "first_name": "Michael", "last_name": "Murr", "email": "michael@hello.com"},
-    {"id": 110, "first_name": "Ray", "last_name": "Gee", "email": "gin@hey.com"},
-    {"id": 111, "first_name": "Jenn", "last_name": "Wynn", "email": "jenjen@hello.com"},
-    {"id": 112, "first_name": "David", "last_name": "Fam", "email": "david@gmail.com"},
+USERS = [
+    {"id": 1, "username": "demo", "email": "demo@questionaura.com", "auth0_id": "demo-user-12345"},
+    {"id": 101, "username": "wanderer", "email": "guestuser@questionaura.com", "auth0_id": "seed-user-101"},
+    {"id": 102, "username": "newton", "email": "isaacstein@gmail.com", "auth0_id": "seed-user-102"},
+    {"id": 103, "username": "waynebrazy", "email": "allthewayne@yahoo.com", "auth0_id": "seed-user-103"},
+    {"id": 104, "username": "jamestheband", "email": "jayjames@hotmail.com", "auth0_id": "seed-user-104"},
+    {"id": 105, "username": "dadmode", "email": "imthedad@me.com", "auth0_id": "seed-user-105"},
+    {"id": 106, "username": "miguelito", "email": "jmiggs@hello.com", "auth0_id": "seed-user-106"},
+    {"id": 107, "username": "cheflean", "email": "shaphen@gmail.com", "auth0_id": "seed-user-107"},
+    {"id": 108, "username": "charlie", "email": "charles@dude.com", "auth0_id": "seed-user-108"},
+    {"id": 109, "username": "mikey", "email": "michael@hello.com", "auth0_id": "seed-user-109"},
+    {"id": 110, "username": "ray", "email": "gin@hey.com", "auth0_id": "seed-user-110"},
+    {"id": 111, "username": "jennwynn", "email": "jenjen@hello.com", "auth0_id": "seed-user-111"},
+    {"id": 112, "username": "davidfam", "email": "david@gmail.com", "auth0_id": "seed-user-112"},
 ]
 
-# Questions data (matching original seed IDs)
-QUESTIONS_DATA = [
+QUESTIONS = [
     {"id": 201, "ask": "What's the best strategy for becoming better at solving algorithms?", "asker_id": 106, "topic_id": 1},
     {"id": 202, "ask": "How do I help myself better understand recursions?", "asker_id": 101, "topic_id": 1},
     {"id": 203, "ask": "What are some useful websites or applications for financial health?  I'm looking for tools for investing and managing my finances.", "asker_id": 105, "topic_id": 2},
@@ -72,8 +69,7 @@ QUESTIONS_DATA = [
     {"id": 224, "ask": "What wars involved parties in the same country?", "asker_id": 107, "topic_id": 12},
 ]
 
-# Answers data (matching original seed IDs)
-ANSWERS_DATA = [
+ANSWERS = [
     {"id": 301, "responder_id": 112, "question_id": 201, "response": "Studying data structures (linked lists, trees, hash maps, arrays, tries, etc.) and sorting/search algorithms (radix sort, heap sort, merge sort, quick sort, bubble sort, bSearch, graph traversal etc.) will help you understand and solve algorithm problems much better.  Data structures and methodologies such as dynamic programming, memoization, and tabulation can be used in your algorithm implementation for optimal time and space complexity."},
     {"id": 302, "responder_id": 107, "question_id": 201, "response": "Practice makes perfect. A great platform to practice your algorithmic problem solving skills is on Leetcode.  You can find over 1,500 problems to solve on there, test your solutions, view other peoples' approaches, and discuss different strategies.  If you're new to coding, you should start working on the easy ones but be sure to try medium and hard questions as you go along."},
     {"id": 303, "responder_id": 111, "question_id": 202, "response": "A good strategy for understanding recursions is to draw out each recursive step stack frame as it is being called, till it hits the base case.  You can also use a print statement, such as Console.log (javascript), to help you visualize these stack frames in your console.  By doing this, you can see what value is being returned at each recursive step to see how it helps to achieve the result you are looking for."},
@@ -125,201 +121,153 @@ ANSWERS_DATA = [
 ]
 
 
-def generate_username(first_name: str, last_name: str) -> str:
-    """Generate a username from first and last name."""
-    # Combine first and last name, lowercase, replace spaces with underscores
-    username = f"{first_name}_{last_name}".lower().replace(" ", "_")
-    # Remove any invalid characters and limit to 20 chars
-    username = "".join(c for c in username if c.isalnum() or c in ["_", "-"])[:20]
-    return username
+def reset_database(db):
+    """Drop and recreate all tables."""
+    print("Resetting database...")
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    print("Database reset complete.\n")
 
 
-def seed_all():
-    """Seed all data: topics, users, questions, and answers."""
+def seed_topics(db):
+    """Seed topics and return id mapping."""
+    print("Seeding topics...")
+    id_map = {}
+    created = 0
+    
+    for data in TOPICS:
+        existing = db.query(Topic).filter(Topic.id == data["id"]).first()
+        if existing:
+            id_map[data["id"]] = existing
+        else:
+            topic = Topic(**data)
+            db.add(topic)
+            id_map[data["id"]] = topic
+            created += 1
+    
+    db.flush()
+    print(f"  Created {created} topics")
+    return id_map
+
+
+def seed_users(db):
+    """Seed users and return id mapping."""
+    print("Seeding users...")
+    id_map = {}
+    created = 0
+    
+    for data in USERS:
+        existing = db.query(User).filter(User.id == data["id"]).first()
+        if existing:
+            id_map[data["id"]] = existing
+        else:
+            user = User(**data)
+            db.add(user)
+            id_map[data["id"]] = user
+            created += 1
+    
+    db.flush()
+    print(f"  Created {created} users")
+    return id_map
+
+
+def seed_questions(db, topic_map, user_map):
+    """Seed questions and return id mapping."""
+    print("Seeding questions...")
+    id_map = {}
+    created = 0
+    
+    for data in QUESTIONS:
+        existing = db.query(Question).filter(Question.id == data["id"]).first()
+        if existing:
+            id_map[data["id"]] = existing
+        else:
+            if data["topic_id"] not in topic_map or data["asker_id"] not in user_map:
+                continue
+            question = Question(
+                id=data["id"],
+                topic_id=topic_map[data["topic_id"]].id,
+                ask=data["ask"],
+                asker_id=user_map[data["asker_id"]].id,
+                image_url=None
+            )
+            db.add(question)
+            id_map[data["id"]] = question
+            created += 1
+    
+    db.flush()
+    print(f"  Created {created} questions")
+    return id_map
+
+
+def seed_answers(db, question_map, user_map):
+    """Seed answers."""
+    print("Seeding answers...")
+    created = 0
+    
+    for data in ANSWERS:
+        existing = db.query(Answer).filter(Answer.id == data["id"]).first()
+        if existing:
+            continue
+        if data["question_id"] not in question_map or data["responder_id"] not in user_map:
+            continue
+        answer = Answer(
+            id=data["id"],
+            question_id=question_map[data["question_id"]].id,
+            response=data["response"],
+            responder_id=user_map[data["responder_id"]].id,
+            image_url=None
+        )
+        db.add(answer)
+        created += 1
+    
+    db.flush()
+    print(f"  Created {created} answers")
+
+
+def reset_sequences(db):
+    """Reset database sequences."""
+    try:
+        max_topic_id = db.query(func.max(Topic.id)).scalar() or 0
+        max_user_id = db.query(func.max(User.id)).scalar() or 0
+        max_question_id = db.query(func.max(Question.id)).scalar() or 0
+        max_answer_id = db.query(func.max(Answer.id)).scalar() or 0
+        
+        db.execute(text(f"SELECT setval('topics_id_seq', {max_topic_id + 1}, false)"))
+        db.execute(text(f"SELECT setval('users_id_seq', {max_user_id + 1}, false)"))
+        db.execute(text(f"SELECT setval('questions_id_seq', {max_question_id + 1}, false)"))
+        db.execute(text(f"SELECT setval('answers_id_seq', {max_answer_id + 1}, false)"))
+    except Exception:
+        pass  # Sequences may not exist yet
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Seed the database")
+    parser.add_argument("--reset", action="store_true", help="Reset database before seeding")
+    args = parser.parse_args()
+    
     db = SessionLocal()
     
     try:
-        # Seed Topics
-        print("🌱 Seeding topics...")
-        topics_created = 0
-        topics_skipped = 0
-        topic_id_map = {}
+        if args.reset:
+            confirm = input("This will delete all data. Continue? (yes/no): ")
+            if confirm.lower() != "yes":
+                print("Aborted.")
+                return
+            reset_database(db)
         
-        for topic_data in TOPICS_DATA:
-            existing_topic = db.query(Topic).filter(Topic.id == topic_data["id"]).first()
-            if existing_topic:
-                print(f"  Topic '{topic_data['name']}' (ID: {topic_data['id']}) already exists, skipping...")
-                topics_skipped += 1
-                topic_id_map[topic_data["id"]] = existing_topic
-            else:
-                # Check if topic with same name exists
-                existing_by_name = db.query(Topic).filter(Topic.name == topic_data["name"]).first()
-                if existing_by_name:
-                    print(f"  Topic '{topic_data['name']}' exists with different ID ({existing_by_name.id}), using existing...")
-                    topic_id_map[topic_data["id"]] = existing_by_name
-                    topics_skipped += 1
-                else:
-                    topic = Topic(
-                        id=topic_data["id"], 
-                        name=topic_data["name"],
-                        image_url=topic_data.get("image_url")
-                    )
-                    db.add(topic)
-                    topic_id_map[topic_data["id"]] = topic
-                    topics_created += 1
-                    print(f"  Created topic: {topic_data['name']} (ID: {topic_data['id']})")
+        topic_map = seed_topics(db)
+        user_map = seed_users(db)
+        question_map = seed_questions(db, topic_map, user_map)
+        seed_answers(db, question_map, user_map)
+        reset_sequences(db)
         
-        db.flush()  # Flush to get IDs
-        
-        # Seed Users
-        print("\n👥 Seeding users...")
-        users_created = 0
-        users_skipped = 0
-        user_id_map = {}
-        
-        for user_data in USERS_DATA:
-            existing_user = db.query(User).filter(User.id == user_data["id"]).first()
-            if existing_user:
-                print(f"  User '{user_data['email']}' (ID: {user_data['id']}) already exists, skipping...")
-                users_skipped += 1
-                user_id_map[user_data["id"]] = existing_user
-            else:
-                # Check if user with same email exists
-                existing_by_email = db.query(User).filter(User.email == user_data["email"]).first()
-                if existing_by_email:
-                    print(f"  User '{user_data['email']}' exists with different ID ({existing_by_email.id}), using existing...")
-                    user_id_map[user_data["id"]] = existing_by_email
-                    users_skipped += 1
-                else:
-                    username = generate_username(user_data["first_name"], user_data["last_name"])
-                    # Ensure username is unique
-                    counter = 1
-                    original_username = username
-                    while db.query(User).filter(User.username == username).first():
-                        username = f"{original_username}{counter}"[:20]
-                        counter += 1
-                    
-                    auth0_id = f"seed-user-{user_data['id']}"
-                    user = User(
-                        id=user_data["id"],
-                        auth0_id=auth0_id,
-                        email=user_data["email"],
-                        username=username
-                    )
-                    db.add(user)
-                    user_id_map[user_data["id"]] = user
-                    users_created += 1
-                    print(f"  Created user: {user_data['first_name']} {user_data['last_name']} ({user_data['email']}) (ID: {user_data['id']})")
-        
-        db.flush()  # Flush to get IDs
-        
-        # Seed Questions
-        print("\n❓ Seeding questions...")
-        questions_created = 0
-        questions_skipped = 0
-        question_id_map = {}
-        
-        for question_data in QUESTIONS_DATA:
-            existing_question = db.query(Question).filter(Question.id == question_data["id"]).first()
-            if existing_question:
-                print(f"  Question ID {question_data['id']} already exists, skipping...")
-                questions_skipped += 1
-                question_id_map[question_data["id"]] = existing_question
-            else:
-                # Verify topic and asker exist
-                topic = topic_id_map.get(question_data["topic_id"])
-                asker = user_id_map.get(question_data["asker_id"])
-                
-                if not topic:
-                    print(f"  ⚠️  Warning: Topic ID {question_data['topic_id']} not found, skipping question {question_data['id']}")
-                    continue
-                if not asker:
-                    print(f"  ⚠️  Warning: User ID {question_data['asker_id']} not found, skipping question {question_data['id']}")
-                    continue
-                
-                question = Question(
-                    id=question_data["id"],
-                    topic_id=topic.id,
-                    ask=question_data["ask"],
-                    asker_id=asker.id,
-                    image_url=None
-                )
-                db.add(question)
-                question_id_map[question_data["id"]] = question
-                questions_created += 1
-                print(f"  Created question ID {question_data['id']}: {question_data['ask'][:50]}...")
-        
-        db.flush()  # Flush to get IDs
-        
-        # Seed Answers
-        print("\n💬 Seeding answers...")
-        answers_created = 0
-        answers_skipped = 0
-        
-        for answer_data in ANSWERS_DATA:
-            existing_answer = db.query(Answer).filter(Answer.id == answer_data["id"]).first()
-            if existing_answer:
-                print(f"  Answer ID {answer_data['id']} already exists, skipping...")
-                answers_skipped += 1
-            else:
-                # Verify question and responder exist
-                question = question_id_map.get(answer_data["question_id"])
-                responder = user_id_map.get(answer_data["responder_id"])
-                
-                if not question:
-                    print(f"  ⚠️  Warning: Question ID {answer_data['question_id']} not found, skipping answer {answer_data['id']}")
-                    continue
-                if not responder:
-                    print(f"  ⚠️  Warning: User ID {answer_data['responder_id']} not found, skipping answer {answer_data['id']}")
-                    continue
-                
-                answer = Answer(
-                    id=answer_data["id"],
-                    question_id=question.id,
-                    response=answer_data["response"],
-                    responder_id=responder.id,
-                    image_url=None
-                )
-                db.add(answer)
-                answers_created += 1
-                if answers_created % 10 == 0:
-                    print(f"  Created {answers_created} answers...")
-        
-        # Reset sequences to avoid ID conflicts for future auto-generated records
-        print("\n🔄 Resetting database sequences...")
-        try:
-            # Get max IDs
-            max_topic_id = db.query(func.max(Topic.id)).scalar() or 0
-            max_user_id = db.query(func.max(User.id)).scalar() or 0
-            max_question_id = db.query(func.max(Question.id)).scalar() or 0
-            max_answer_id = db.query(func.max(Answer.id)).scalar() or 0
-            
-            # Reset sequences to max + 1
-            db.execute(text(f"SELECT setval('topics_id_seq', {max_topic_id + 1}, false)"))
-            db.execute(text(f"SELECT setval('users_id_seq', {max_user_id + 1}, false)"))
-            db.execute(text(f"SELECT setval('questions_id_seq', {max_question_id + 1}, false)"))
-            db.execute(text(f"SELECT setval('answers_id_seq', {max_answer_id + 1}, false)"))
-            print("  Sequences reset successfully")
-        except Exception as e:
-            print(f"  ⚠️  Warning: Could not reset sequences: {e}")
-            print("  This is usually fine if sequences don't exist yet")
-        
-        # Commit all changes
         db.commit()
-        
-        # Print summary
-        print("\n" + "="*60)
-        print("✅ Seeding complete!")
-        print("="*60)
-        print(f"Topics:   Created: {topics_created:3d}  Skipped: {topics_skipped:3d}")
-        print(f"Users:    Created: {users_created:3d}  Skipped: {users_skipped:3d}")
-        print(f"Questions: Created: {questions_created:3d}  Skipped: {questions_skipped:3d}")
-        print(f"Answers:  Created: {answers_created:3d}  Skipped: {answers_skipped:3d}")
-        print("="*60)
+        print("\nSeeding complete!")
         
     except Exception as e:
         db.rollback()
-        print(f"\n❌ Error seeding data: {e}")
+        print(f"\nError: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
@@ -328,5 +276,4 @@ def seed_all():
 
 
 if __name__ == "__main__":
-    seed_all()
-
+    main()
