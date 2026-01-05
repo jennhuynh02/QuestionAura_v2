@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { questionService } from "../api/questionService";
@@ -50,8 +50,8 @@ export default function Home() {
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
   const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode 
-    ? JSON.parse(demoUserStr) as UserResponse 
+  const demoUser: UserResponse | null = isDemoMode
+    ? (JSON.parse(demoUserStr) as UserResponse)
     : null;
 
   const currentUser = isDemoMode ? demoUser : user;
@@ -62,10 +62,10 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadTopics();
-    loadQuestions();
-  }, [selectedTopicId]);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
 
   const loadTopics = async () => {
     try {
@@ -76,22 +76,38 @@ export default function Home() {
     }
   };
 
-  const loadQuestions = async () => {
+  const loadQuestions = useCallback(async () => {
     setIsLoading(true);
     try {
-      const questionsData = await questionService.getAllQuestions(
-        selectedTopicId ? { topic_id: selectedTopicId } : undefined
-      );
-      setQuestions(questionsData);
+      const response = await questionService.getAllQuestions({
+        topic_id: selectedTopicId || undefined,
+        page: currentPage,
+        page_size: pageSize,
+      });
+      setQuestions(response.items);
+      setTotalPages(response.total_pages);
     } catch (err) {
       console.error("Failed to load questions:", err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedTopicId, currentPage, pageSize]);
+
+  useEffect(() => {
+    loadTopics();
+  }, []);
+
+  useEffect(() => {
+    loadQuestions();
+  }, [loadQuestions]);
 
   const handleQuestionCreated = () => {
-    loadQuestions();
+    setCurrentPage(1); // Reset to first page - useEffect will handle reload
+  };
+
+  const handleTopicSelect = (topicId: number | null) => {
+    setSelectedTopicId(topicId);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   const handleLogout = () => {
@@ -105,20 +121,36 @@ export default function Home() {
   };
 
   const getUserPicture = () => {
-    if (currentUser?.picture) return currentUser.picture;
-    if (isDemoMode && currentUser?.username) {
+    // Type guard for Auth0 User (has picture property)
+    if (currentUser && "picture" in currentUser && currentUser.picture) {
+      return currentUser.picture;
+    }
+    // For demo users, use username for avatar
+    if (
+      isDemoMode &&
+      currentUser &&
+      "username" in currentUser &&
+      currentUser.username
+    ) {
       return `https://ui-avatars.com/api/?name=${currentUser.username}`;
     }
+    // Fallback to email-based avatar
     return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
   };
 
   const getUserName = () => {
-    return (
-      currentUser?.name ||
-      currentUser?.username ||
-      currentUser?.email ||
-      "Guest User"
-    );
+    if (!currentUser) return "Guest User";
+
+    // Type guard for Auth0 User (has name property)
+    if ("name" in currentUser && currentUser.name) {
+      return currentUser.name;
+    }
+    // For UserResponse (has username property)
+    if ("username" in currentUser && currentUser.username) {
+      return currentUser.username;
+    }
+    // Fallback to email
+    return currentUser.email || "Guest User";
   };
 
   return (
@@ -158,7 +190,7 @@ export default function Home() {
             className={`${styles.sidebarItem} ${
               selectedTopicId === null ? styles.activeSidebarItem : ""
             }`}
-            onClick={() => setSelectedTopicId(null)}
+            onClick={() => handleTopicSelect(null)}
           >
             Feed
           </div>
@@ -171,7 +203,7 @@ export default function Home() {
                 className={`${styles.sidebarItem} ${
                   selectedTopicId === topic.id ? styles.activeSidebarItem : ""
                 }`}
-                onClick={() => setSelectedTopicId(topic.id)}
+                onClick={() => handleTopicSelect(topic.id)}
               >
                 {topicImage && (
                   <img
@@ -241,6 +273,29 @@ export default function Home() {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                className={styles.paginationButton}
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Previous
+              </button>
+              <div className={styles.paginationInfo}>
+                Page {currentPage} of {totalPages}
+              </div>
+              <button
+                className={styles.paginationButton}
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right Sidebar */}

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from app.schemas.user import UserResponse
 from app.schemas.topic import TopicResponse
@@ -33,6 +33,18 @@ class QuestionResponse(QuestionBase):
     updated_at: datetime
     topic: TopicResponse
     asker: UserResponse
+
+    class Config:
+        from_attributes = True
+
+
+class PaginatedQuestionResponse(BaseModel):
+    """Paginated questions response."""
+    items: List[QuestionResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
 
     class Config:
         from_attributes = True

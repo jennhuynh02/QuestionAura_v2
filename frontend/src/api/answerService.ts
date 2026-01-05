@@ -1,13 +1,13 @@
 import axiosInstance from "./axiosInstance";
-import type { components } from "../types/api";
+import type { components, operations } from "../types/api";
 
+// Use generated types from OpenAPI schema
 export type AnswerResponse = components["schemas"]["AnswerResponse"];
 export type AnswerCreate = components["schemas"]["AnswerCreate"];
 export type AnswerUpdate = components["schemas"]["AnswerUpdate"];
 
-export interface AnswerQueryParams {
-  question_id?: number;
-}
+// Extract query parameters from the generated operation type
+export type AnswerQueryParams = operations["get_all_answers_answers_get"]["parameters"]["query"];
 
 export const answerService = {
   /**

@@ -1,6 +1,7 @@
 import axiosInstance from "./axiosInstance";
 import type { components } from "../types/api";
 
+// Use generated types from OpenAPI schema
 export type TopicResponse = components["schemas"]["TopicResponse"];
 export type TopicCreate = components["schemas"]["TopicCreate"];
 export type TopicUpdate = components["schemas"]["TopicUpdate"];

@@ -6,31 +6,57 @@ from app.dependencies import get_current_user
 from app.models.user import User
 from app.models.question import Question
 from app.models.topic import Topic
-from app.schemas.question import QuestionResponse, QuestionCreate, QuestionUpdate
+from app.schemas.question import QuestionResponse, QuestionCreate, QuestionUpdate, PaginatedQuestionResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
 
-@router.get("", response_model=List[QuestionResponse])
+@router.get("", response_model=PaginatedQuestionResponse)
 async def get_all_questions(
     topic_id: Optional[int] = Query(None, description="Filter by topic ID"),
     asker_id: Optional[int] = Query(None, description="Filter by asker ID"),
+    page: int = Query(1, ge=1, description="Page number (starts at 1)"),
+    page_size: int = Query(10, ge=1, le=100, description="Items per page (max 100)"),
     db: Session = Depends(get_db)
 ):
-    """Get all questions with optional filters."""
+    """
+    Get all questions with optional filters and pagination.
+    
+    - **topic_id**: Filter by topic
+    - **asker_id**: Filter by question author
+    - **page**: Page number (starts at 1)
+    - **page_size**: Number of items per page (max 100)
+    """
+    # Base query with relationships
     query = db.query(Question).options(
         joinedload(Question.topic),
         joinedload(Question.asker)
     )
     
+    # Apply filters
     if topic_id is not None:
         query = query.filter(Question.topic_id == topic_id)
     
     if asker_id is not None:
         query = query.filter(Question.asker_id == asker_id)
     
-    questions = query.all()
-    return questions
+    # Get total count before pagination
+    total = query.count()
+    
+    # Apply pagination
+    offset = (page - 1) * page_size
+    questions = query.offset(offset).limit(page_size).all()
+    
+    # Calculate total pages
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    
+    return PaginatedQuestionResponse(
+        items=questions,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages
+    )
 
 
 @router.get("/{question_id}", response_model=QuestionResponse)

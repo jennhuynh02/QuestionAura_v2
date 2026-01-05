@@ -66,6 +66,195 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Topics
+         * @description Get all topics.
+         */
+        get: operations["get_all_topics_topics_get"];
+        put?: never;
+        /**
+         * Create Topic
+         * @description Create a new topic. Requires authentication.
+         */
+        post: operations["create_topic_topics_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{topic_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Topic By Id
+         * @description Get topic by ID.
+         */
+        get: operations["get_topic_by_id_topics__topic_id__get"];
+        /**
+         * Update Topic
+         * @description Update a topic. Requires authentication.
+         */
+        put: operations["update_topic_topics__topic_id__put"];
+        post?: never;
+        /**
+         * Delete Topic
+         * @description Delete a topic. Requires authentication.
+         */
+        delete: operations["delete_topic_topics__topic_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Questions
+         * @description Get all questions with optional filters and pagination.
+         *
+         *     - **topic_id**: Filter by topic
+         *     - **asker_id**: Filter by question author
+         *     - **page**: Page number (starts at 1)
+         *     - **page_size**: Number of items per page (max 100)
+         */
+        get: operations["get_all_questions_questions_get"];
+        put?: never;
+        /**
+         * Create Question
+         * @description Create a new question. Requires authentication. asker_id is set from current user.
+         */
+        post: operations["create_question_questions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/questions/{question_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Question By Id
+         * @description Get question by ID.
+         */
+        get: operations["get_question_by_id_questions__question_id__get"];
+        /**
+         * Update Question
+         * @description Update a question. Requires authentication. Only the asker can update.
+         */
+        put: operations["update_question_questions__question_id__put"];
+        post?: never;
+        /**
+         * Delete Question
+         * @description Delete a question. Requires authentication. Only the asker can delete.
+         */
+        delete: operations["delete_question_questions__question_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Answers
+         * @description Get all answers with optional filter.
+         */
+        get: operations["get_all_answers_answers_get"];
+        put?: never;
+        /**
+         * Create Answer
+         * @description Create a new answer. Requires authentication. responder_id is set from current user.
+         */
+        post: operations["create_answer_answers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/answers/{answer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Answer By Id
+         * @description Get answer by ID.
+         */
+        get: operations["get_answer_by_id_answers__answer_id__get"];
+        /**
+         * Update Answer
+         * @description Update an answer. Requires authentication. Only the responder can update.
+         */
+        put: operations["update_answer_answers__answer_id__put"];
+        post?: never;
+        /**
+         * Delete Answer
+         * @description Delete an answer. Requires authentication. Only the responder can delete.
+         */
+        delete: operations["delete_answer_answers__answer_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/upload/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Image
+         * @description Upload an image to Cloudinary.
+         *
+         *     Enforces the following limits:
+         *     - Maximum file size: 5MB
+         *     - Allowed formats: JPEG, PNG, GIF, WebP
+         *     - Maximum count: 1 image per upload
+         *
+         *     Requires authentication.
+         *     Returns the Cloudinary URL.
+         */
+        post: operations["upload_image_upload_image_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/protected": {
         parameters: {
             query?: never;
@@ -130,6 +319,66 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AnswerCreate
+         * @description Schema for creating an answer.
+         */
+        AnswerCreate: {
+            /** Question Id */
+            question_id: number;
+            /** Response */
+            response: string;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /**
+         * AnswerResponse
+         * @description Complete answer response with database fields.
+         */
+        AnswerResponse: {
+            /** Question Id */
+            question_id: number;
+            /** Response */
+            response: string;
+            /** Image Url */
+            image_url?: string | null;
+            /** Id */
+            id: number;
+            /** Responder Id */
+            responder_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            question: components["schemas"]["QuestionResponse"];
+            responder: components["schemas"]["UserResponse"];
+        };
+        /**
+         * AnswerUpdate
+         * @description Schema for updating an answer.
+         */
+        AnswerUpdate: {
+            /** Question Id */
+            question_id?: number | null;
+            /** Response */
+            response?: string | null;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /** Body_upload_image_upload_image_post */
+        Body_upload_image_upload_image_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** DemoLoginResponse */
         DemoLoginResponse: {
             /** Access Token */
@@ -145,6 +394,106 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * PaginatedQuestionResponse
+         * @description Paginated questions response.
+         */
+        PaginatedQuestionResponse: {
+            /** Items */
+            items: components["schemas"]["QuestionResponse"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total Pages */
+            total_pages: number;
+        };
+        /**
+         * QuestionCreate
+         * @description Schema for creating a question.
+         */
+        QuestionCreate: {
+            /** Topic Id */
+            topic_id: number;
+            /** Ask */
+            ask: string;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /**
+         * QuestionResponse
+         * @description Complete question response with database fields.
+         */
+        QuestionResponse: {
+            /** Topic Id */
+            topic_id: number;
+            /** Ask */
+            ask: string;
+            /** Image Url */
+            image_url?: string | null;
+            /** Id */
+            id: number;
+            /** Asker Id */
+            asker_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            topic: components["schemas"]["TopicResponse"];
+            asker: components["schemas"]["UserResponse"];
+        };
+        /**
+         * QuestionUpdate
+         * @description Schema for updating a question.
+         */
+        QuestionUpdate: {
+            /** Topic Id */
+            topic_id?: number | null;
+            /** Ask */
+            ask?: string | null;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /**
+         * TopicCreate
+         * @description Schema for creating a topic.
+         */
+        TopicCreate: {
+            /** Name */
+            name: string;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /**
+         * TopicResponse
+         * @description Complete topic response with database fields.
+         */
+        TopicResponse: {
+            /** Name */
+            name: string;
+            /** Image Url */
+            image_url?: string | null;
+            /** Id */
+            id: number;
+        };
+        /**
+         * TopicUpdate
+         * @description Schema for updating a topic.
+         */
+        TopicUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Image Url */
+            image_url?: string | null;
         };
         /**
          * UserCreate
@@ -275,6 +624,515 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DemoLoginResponse"];
+                };
+            };
+        };
+    };
+    get_all_topics_topics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicResponse"][];
+                };
+            };
+        };
+    };
+    create_topic_topics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_topic_by_id_topics__topic_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_topic_topics__topic_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_topic_topics__topic_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_all_questions_questions_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by topic ID */
+                topic_id?: number | null;
+                /** @description Filter by asker ID */
+                asker_id?: number | null;
+                /** @description Page number (starts at 1) */
+                page?: number;
+                /** @description Items per page (max 100) */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedQuestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_question_questions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_question_by_id_questions__question_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_question_questions__question_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_question_questions__question_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_all_answers_answers_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by question ID */
+                question_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_answer_answers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_answer_by_id_answers__answer_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                answer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_answer_answers__answer_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                answer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_answer_answers__answer_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                answer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_image_upload_image_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_image_upload_image_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
