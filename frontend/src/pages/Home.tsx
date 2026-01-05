@@ -158,9 +158,6 @@ export default function Home() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <div className={styles.logo}>Question Aura</div>
-        <div className={styles.navIcons}>
-          <div className={`${styles.navIcon} ${styles.activeIcon}`}>🏠</div>
-        </div>
         <div className={styles.searchBar}>
           <input type="text" placeholder="Search Question Aura" />
         </div>

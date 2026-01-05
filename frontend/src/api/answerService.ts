@@ -7,7 +7,8 @@ export type AnswerCreate = components["schemas"]["AnswerCreate"];
 export type AnswerUpdate = components["schemas"]["AnswerUpdate"];
 
 // Extract query parameters from the generated operation type
-export type AnswerQueryParams = operations["get_all_answers_answers_get"]["parameters"]["query"];
+export type AnswerQueryParams =
+  operations["get_all_answers_answers_get"]["parameters"]["query"];
 
 export const answerService = {
   /**
@@ -34,9 +35,7 @@ export const answerService = {
    * Create a new answer. Requires authentication.
    * responder_id is automatically set from the current user.
    */
-  createAnswer: async (
-    answerData: AnswerCreate
-  ): Promise<AnswerResponse> => {
+  createAnswer: async (answerData: AnswerCreate): Promise<AnswerResponse> => {
     const { data } = await axiosInstance.post<AnswerResponse>(
       "/answers",
       answerData
@@ -67,4 +66,3 @@ export const answerService = {
     await axiosInstance.delete(`/answers/${id}`);
   },
 };
-

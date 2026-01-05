@@ -1,10 +1,17 @@
 .questionCard {
   background: white;
   padding: 20px;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #dee0e1;
-  margin-bottom: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.questionCard:hover {
+  border-color: #b92b27;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .questionHeader {
@@ -22,22 +29,22 @@
   font-size: 18px;
   font-weight: 600;
   color: #282829;
-  margin-bottom: 8px;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  line-height: 1.5;
   flex: 1;
 }
 
 .questionImage {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  border-radius: 4px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #dee0e1;
 }
 
 .questionImage img {
   width: 100%;
-  max-height: 400px;
+  max-height: 450px;
   object-fit: contain;
   display: block;
   background-color: #f7f7f8;
@@ -105,18 +112,19 @@
 
 .topicBadge {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 6px 12px;
   background-color: #f7f7f8;
-  border-radius: 4px;
+  border-radius: 16px;
   font-size: 12px;
+  font-weight: 500;
   color: #636466;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .answersSection {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f1f2f2;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e9ea;
 }
 
 .answer {
@@ -162,29 +170,30 @@
   color: #282829;
   line-height: 1.6;
   margin-left: 34px;
+  margin-top: 8px;
   white-space: pre-wrap;
 }
 
 .answerImage {
   margin-top: 12px;
   margin-left: 34px;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #dee0e1;
 }
 
 .answerImage img {
   width: 100%;
-  max-height: 300px;
+  max-height: 350px;
   object-fit: contain;
   display: block;
   background-color: #f7f7f8;
 }
 
 .noAnswers {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f1f2f2;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e9ea;
   color: #939598;
   font-size: 14px;
   font-style: italic;
