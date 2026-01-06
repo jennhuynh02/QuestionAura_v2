@@ -1,19 +1,53 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
 import type { UserResponse } from "../api/userService";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./TopicDetail.module.css";
 
+// Import topic images
+import codingImg from "../assets/coding.jpg";
+import financeImg from "../assets/finance.png";
+import booksImg from "../assets/books.png";
+import criminologyImg from "../assets/criminology.png";
+import philosophyImg from "../assets/philosophy.png";
+import natureImg from "../assets/nature.png";
+import psychologyImg from "../assets/psychology.png";
+import musicImg from "../assets/music.png";
+import careerImg from "../assets/career.png";
+import technologyImg from "../assets/technology.png";
+import artImg from "../assets/art.png";
+import historyImg from "../assets/history.png";
+
+// Map topic names to their images
+const getTopicImage = (topicName: string): string => {
+  const imageMap: Record<string, string> = {
+    Programming: codingImg,
+    Finance: financeImg,
+    Books: booksImg,
+    Criminology: criminologyImg,
+    Philosophy: philosophyImg,
+    Nature: natureImg,
+    Psychology: psychologyImg,
+    Music: musicImg,
+    Career: careerImg,
+    Technology: technologyImg,
+    Art: artImg,
+    History: historyImg,
+  };
+  return imageMap[topicName] || "";
+};
+
 export default function TopicDetail() {
   const { id } = useParams<{ id: string }>();
-  const { user, logout, isAuthenticated } = useAuth0();
-  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth0();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
@@ -28,12 +62,25 @@ export default function TopicDetail() {
   const [topic, setTopic] = useState<TopicResponse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
+  // Pagination state - read from URL, default to 1
+  const pageParam = searchParams.get("page");
+  const currentPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
+
+  // Update URL when page changes
+  const setCurrentPage = useCallback(
+    (page: number) => {
+      const newPage = Math.max(1, page);
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set("page", newPage.toString());
+        return newParams;
+      });
+    },
+    [setSearchParams]
+  );
 
   const loadTopic = useCallback(async () => {
     if (!id) return;
@@ -72,17 +119,11 @@ export default function TopicDetail() {
   }, [loadQuestions]);
 
   const handleQuestionCreated = () => {
-    setCurrentPage(1); // Reset to first page - useEffect will handle reload
-  };
-
-  const handleLogout = () => {
-    if (isDemoMode) {
-      localStorage.removeItem("demo_token");
-      localStorage.removeItem("demo_user");
-      navigate("/login");
-    } else {
-      logout({ logoutParams: { returnTo: window.location.origin } });
-    }
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("page", "1");
+      return newParams;
+    }); // Reset to first page - useEffect will handle reload
   };
 
   const getUserPicture = () => {
@@ -119,133 +160,103 @@ export default function TopicDetail() {
   };
 
   if (!topic) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <AuthenticatedLayout>
+        <div className={styles.loading}>Loading...</div>
+      </AuthenticatedLayout>
+    );
   }
 
   return (
-    <div className={styles.container}>
-      {/* Navbar */}
-      <nav className={styles.navbar}>
-        <div className={styles.logo} onClick={() => navigate("/")}>
-          Question Aura
-        </div>
-        <div className={styles.userActions}>
-          <div
-            className={styles.userDropdown}
-            onMouseEnter={() => setIsUserDropdownOpen(true)}
-            onMouseLeave={() => setIsUserDropdownOpen(false)}
-          >
-            <img
-              src={getUserPicture()}
-              alt={getUserName()}
-              className={styles.profilePic}
-              style={{ cursor: "pointer" }}
-            />
-            {isUserDropdownOpen && (
-              <div className={styles.dropdownMenu}>
-                <button className={styles.dropdownItem} onClick={handleLogout}>
-                  Log Out
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Layout */}
-      <main className={styles.mainLayout}>
-        <div className={styles.content}>
-          {/* Topic Header */}
-          <div className={styles.topicHeader}>
-            <button className={styles.backButton} onClick={() => navigate("/")}>
-              ← Back to Home
-            </button>
-            <h1 className={styles.topicTitle}>{topic.name}</h1>
-          </div>
-
-          {/* Post Input */}
-          <div className={styles.postInput}>
-            <div className={styles.postInputPrompt}>
-              <img
-                src={getUserPicture()}
-                alt=""
-                className={styles.profilePic}
-              />
-              <span>What is your question about {topic.name}?</span>
+    <AuthenticatedLayout activeTopicId={topic.id}>
+      <div className={styles.content}>
+        {/* Topic Header */}
+        <div className={styles.topicHeader}>
+          <div className={styles.topicTitleContainer}>
+            <span className={styles.topicLabel}>Topic</span>
+            <div className={styles.topicTitleRow}>
+              {getTopicImage(topic.name) && (
+                <img
+                  src={getTopicImage(topic.name) || topic.image_url || ""}
+                  alt={topic.name}
+                  className={styles.topicTitleImage}
+                />
+              )}
+              <h1 className={styles.topicTitle}>{topic.name}</h1>
             </div>
-            <button
-              className={styles.askQuestionBtn}
-              onClick={() => setIsModalOpen(true)}
-            >
-              Ask Question
-            </button>
           </div>
+          <button
+            className={styles.askQuestionBtn}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Ask Question
+          </button>
+        </div>
 
-          {/* Questions Feed */}
-          <div className={styles.feed}>
-            {isLoading ? (
-              [1, 2, 3].map((i) => (
-                <div key={i} className={styles.skeletonCard}>
+        {/* Questions Feed */}
+        <div className={styles.feed}>
+          {isLoading ? (
+            [1, 2, 3].map((i) => (
+              <div key={i} className={styles.skeletonCard}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "center",
+                  }}
+                >
                   <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      className={styles.profilePic}
-                      style={{ width: "24px", height: "24px" }}
-                    ></div>
-                    <div
-                      className={styles.skeletonText}
-                      style={{ width: "100px" }}
-                    ></div>
-                  </div>
-                  <div className={styles.skeletonTitle}></div>
-                  <div className={styles.skeletonText}></div>
-                  <div className={styles.skeletonText}></div>
+                    className={styles.profilePic}
+                    style={{ width: "24px", height: "24px" }}
+                  ></div>
                   <div
                     className={styles.skeletonText}
-                    style={{ width: "40%" }}
+                    style={{ width: "100px" }}
                   ></div>
                 </div>
-              ))
-            ) : questions.length > 0 ? (
-              questions.map((question) => (
-                <QuestionCard key={question.id} question={question} />
-              ))
-            ) : (
-              <div className={styles.noQuestions}>
-                No questions yet in this topic. Be the first to ask!
+                <div className={styles.skeletonTitle}></div>
+                <div className={styles.skeletonText}></div>
+                <div className={styles.skeletonText}></div>
+                <div
+                  className={styles.skeletonText}
+                  style={{ width: "40%" }}
+                ></div>
               </div>
-            )}
-          </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className={styles.pagination}>
-              <button
-                className={styles.paginationButton}
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Previous
-              </button>
-              <div className={styles.paginationInfo}>
-                Page {currentPage} of {totalPages}
-              </div>
-              <button
-                className={styles.paginationButton}
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Next
-              </button>
+            ))
+          ) : questions.length > 0 ? (
+            questions.map((question) => (
+              <QuestionCard key={question.id} question={question} />
+            ))
+          ) : (
+            <div className={styles.noQuestions}>
+              No questions yet in this topic. Be the first to ask!
             </div>
           )}
         </div>
-      </main>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              className={styles.paginationButton}
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <div className={styles.paginationInfo}>
+              Page {currentPage} of {totalPages}
+            </div>
+            <button
+              className={styles.paginationButton}
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Question Form Modal */}
       <QuestionFormModal
@@ -256,6 +267,6 @@ export default function TopicDetail() {
         userPicture={getUserPicture()}
         defaultTopicId={parseInt(id!)}
       />
-    </div>
+    </AuthenticatedLayout>
   );
 }

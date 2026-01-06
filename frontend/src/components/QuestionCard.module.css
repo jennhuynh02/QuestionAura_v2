@@ -34,6 +34,18 @@
   flex: 1;
 }
 
+.topicBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #f7f7f8;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #636466;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
 .questionImage {
   margin-top: 14px;
   margin-bottom: 14px;
@@ -50,21 +62,41 @@
   background-color: #f7f7f8;
 }
 
+.answerButton {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #b92b27;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.answerButton:hover {
+  background-color: #a02622;
+}
+
 .dropdownContainer {
   position: relative;
+  flex-shrink: 0;
 }
 
 .dropdownButton {
-  background: none;
+  padding: 6px 12px;
   border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #636466;
   border-radius: 4px;
+  background-color: transparent;
+  color: #636466;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
   transition: background-color 0.2s;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .dropdownButton:hover {
@@ -78,47 +110,28 @@
   margin-top: 4px;
   background: white;
   border: 1px solid #dee0e1;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 100;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   min-width: 120px;
+  z-index: 1000;
+  overflow: hidden;
 }
 
 .dropdownItem {
   width: 100%;
-  padding: 10px 16px;
+  padding: 12px 16px;
   text-align: left;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 14px;
   color: #282829;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
+  display: block;
 }
 
 .dropdownItem:hover {
   background-color: #f7f7f8;
-}
-
-.dropdownItem:first-child {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.dropdownItem:last-child {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-.topicBadge {
-  display: inline-block;
-  padding: 6px 12px;
-  background-color: #f7f7f8;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #636466;
-  margin-top: 10px;
 }
 
 .answersSection {

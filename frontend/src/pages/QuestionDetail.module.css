@@ -1,87 +1,12 @@
-.container {
+.mainContent {
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
+  min-width: 0;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #f1f2f2;
-  color: #282829;
-}
-
-.navbar {
-  height: 50px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  padding: 0 100px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 20px;
-}
-
-.logo {
-  font-family: "Georgia", serif;
-  font-size: 24px;
-  color: #b92b27;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.navIcons {
-  display: flex;
-  gap: 30px;
-  margin-left: 20px;
-}
-
-.navIcon {
-  font-size: 20px;
-  color: #636466;
-  cursor: pointer;
-}
-
-.searchBar {
-  flex: 1;
-  max-width: 600px;
-  margin: 0 20px;
-}
-
-.searchBar input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #dee0e1;
-  border-radius: 4px;
-  background-color: #f7f7f8;
-}
-
-.userActions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.profilePic {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #ddd;
-}
-
-.logoutBtn {
-  background: none;
-  border: 1px solid #dee0e1;
-  padding: 5px 10px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13px;
-  color: #636466;
-}
-
-.mainContent {
-  max-width: 800px;
-  margin: 20px auto;
-  width: 100%;
-  padding: 0 20px;
+  gap: 16px;
 }
 
 .backButton {
@@ -90,11 +15,13 @@
   color: #636466;
   cursor: pointer;
   font-size: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   padding: 8px 0;
   display: flex;
   align-items: center;
   gap: 5px;
+  white-space: nowrap;
+  align-self: flex-start;
 }
 
 .backButton:hover {
@@ -103,15 +30,20 @@
 
 .questionCard {
   background: white;
-  padding: 30px;
-  border-radius: 4px;
+  padding: 20px;
+  border-radius: 8px;
   border: 1px solid #dee0e1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  width: 100%;
 }
 
 .questionHeader {
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
   border-bottom: 1px solid #f1f2f2;
+  width: 100%;
 }
 
 .questionHeaderTop {
@@ -119,10 +51,13 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .dropdownContainer {
   position: relative;
+  flex-shrink: 0;
 }
 
 .dropdownButton {
@@ -165,6 +100,8 @@
   font-size: 14px;
   color: #282829;
   transition: background-color 0.2s;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .dropdownItem:hover {
@@ -181,6 +118,28 @@
   border-bottom-right-radius: 4px;
 }
 
+.questionTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.topicContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.topicLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #939598;
+}
+
 .topicBadge {
   display: inline-block;
   padding: 4px 8px;
@@ -188,7 +147,8 @@
   border-radius: 4px;
   font-size: 12px;
   color: #636466;
-  margin-bottom: 16px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .questionText {
@@ -197,10 +157,15 @@
   color: #282829;
   margin-bottom: 16px;
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .questionCardContent {
   width: 100%;
+  min-width: 0;
+  flex: 1;
 }
 
 .questionImage {
@@ -224,28 +189,58 @@
 .questionMeta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-size: 14px;
   color: #939598;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.questionAuthorAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
 .questionAuthor {
   font-weight: 600;
   color: #282829;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .questionDate {
   color: #939598;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.answerButtonInline {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #b92b27;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.answerButtonInline:hover {
+  background-color: #a02622;
 }
 
 .answersSection {
-  margin-top: 30px;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .answersHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
 }
 
@@ -254,6 +249,8 @@
   font-weight: 600;
   color: #282829;
   margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .answerButton {
@@ -266,6 +263,8 @@
   font-size: 14px;
   font-weight: 500;
   transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .answerButton:hover {
@@ -273,8 +272,8 @@
 }
 
 .answer {
-  margin-bottom: 30px;
-  padding-bottom: 30px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #f1f2f2;
 }
 
@@ -289,42 +288,52 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .answerAvatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .answerMeta {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .answerAuthor {
   font-size: 14px;
   font-weight: 600;
   color: #282829;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .answerDate {
   font-size: 12px;
   color: #939598;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .answerContent {
   font-size: 15px;
   color: #282829;
   line-height: 1.6;
-  margin-left: 42px;
+  margin-left: 42px; /* 32px avatar + 10px gap */
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .answerImage {
   margin-top: 12px;
-  margin-left: 42px;
+  margin-left: 42px; /* Match answerContent indentation */
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid #dee0e1;
@@ -343,21 +352,27 @@
   font-size: 14px;
   font-style: italic;
   padding: 20px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .errorContainer {
-  max-width: 800px;
+  max-width: 100%;
   margin: 40px auto;
   padding: 40px;
   background: white;
   border-radius: 4px;
   border: 1px solid #dee0e1;
   text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .errorContainer h2 {
   color: #282829;
   margin-bottom: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .errorContainer .backButton {

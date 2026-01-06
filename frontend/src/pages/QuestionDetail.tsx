@@ -6,15 +6,15 @@ import { answerService } from "../api/answerService";
 import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
 import type { UserResponse } from "../api/userService";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import Loading from "../components/Loading";
 import AnswerFormModal from "../components/AnswerFormModal";
 import styles from "./QuestionDetail.module.css";
-import { AiOutlineMore } from "react-icons/ai";
 
 export default function QuestionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
 
   // Check if user is using demo login
   const demoUserStr = localStorage.getItem("demo_user");
@@ -29,7 +29,6 @@ export default function QuestionDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAnswerModalOpen, setIsAnswerModalOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const loadAnswers = useCallback(async (questionId: number) => {
     try {
@@ -64,16 +63,6 @@ export default function QuestionDetail() {
       loadQuestion();
     }
   }, [id, loadQuestion]);
-
-  const handleLogout = () => {
-    if (isDemoMode) {
-      localStorage.removeItem("demo_token");
-      localStorage.removeItem("demo_user");
-      navigate("/login");
-    } else {
-      logout({ logoutParams: { returnTo: window.location.origin } });
-    }
-  };
 
   const getUserPicture = (
     user?: UserResponse | { username?: string; email?: string } | null
@@ -111,16 +100,7 @@ export default function QuestionDetail() {
     return currentUser.username || currentUser.email || "Guest User";
   };
 
-  const handleDropdownToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleAnswerClick = (e?: React.MouseEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
-    setIsDropdownOpen(false);
+  const handleAnswerClick = () => {
     setIsAnswerModalOpen(true);
   };
 
@@ -130,110 +110,51 @@ export default function QuestionDetail() {
     }
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      if (isDropdownOpen) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [isDropdownOpen]);
-
   if (isLoading) {
     return <Loading />;
   }
 
   if (error || !question) {
     return (
-      <div className={styles.container}>
-        <nav className={styles.navbar}>
-          <div className={styles.logo} onClick={() => navigate("/")}>
-            Question Aura
-          </div>
-          <div className={styles.navIcons}>
-            <div
-              className={styles.navIcon}
-              onClick={() => navigate("/")}
-              style={{ cursor: "pointer" }}
-            >
-              🏠
-            </div>
-          </div>
-          <div className={styles.searchBar}>
-            <input type="text" placeholder="Search Question Aura" />
-          </div>
-          <div className={styles.userActions}>
-            <img
-              src={getUserPicture(currentUser)}
-              alt={getUserName(currentUser)}
-              className={styles.profilePic}
-            />
-            <button className={styles.logoutBtn} onClick={handleLogout}>
-              Log Out
-            </button>
-          </div>
-        </nav>
+      <AuthenticatedLayout>
         <div className={styles.errorContainer}>
           <h2>{error || "Question not found"}</h2>
           <button onClick={() => navigate("/")} className={styles.backButton}>
             Go Back to Feed
           </button>
         </div>
-      </div>
+      </AuthenticatedLayout>
     );
   }
 
   return (
-    <div className={styles.container}>
-      {/* Navbar */}
-      <nav className={styles.navbar}>
-        <div className={styles.logo} onClick={() => navigate("/")}>
-          Question Aura
-        </div>
-        <div className={styles.navIcons}>
-          <div
-            className={styles.navIcon}
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          >
-            🏠
-          </div>
-        </div>
-        <div className={styles.searchBar}>
-          <input type="text" placeholder="Search Question Aura" />
-        </div>
-        <div className={styles.userActions}>
-          <img
-            src={getUserPicture(currentUser)}
-            alt={getUserName(currentUser)}
-            className={styles.profilePic}
-          />
-          <button className={styles.logoutBtn} onClick={handleLogout}>
-            Log Out
-          </button>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className={styles.mainContent}>
-        <button onClick={() => navigate("/")} className={styles.backButton}>
-          ← Back to Feed
-        </button>
-
+    <AuthenticatedLayout activeTopicId={question.topic.id}>
+      <div className={styles.mainContent}>
         <div className={styles.questionCard}>
           <div className={styles.questionHeader}>
             <div className={styles.questionHeaderTop}>
               <div className={styles.questionCardContent}>
-                <div className={styles.topicBadge}>{question.topic.name}</div>
-                <div className={styles.questionText}>{question.ask}</div>
-                {question.image_url && (
-                  <div className={styles.questionImage}>
-                    <img src={question.image_url} alt="Question attachment" />
+                <div className={styles.questionTopRow}>
+                  <div className={styles.topicContainer}>
+                    <span className={styles.topicLabel}>Topic:</span>
+                    <div className={styles.topicBadge}>
+                      {question.topic.name}
+                    </div>
                   </div>
-                )}
+                  <button
+                    className={styles.answerButtonInline}
+                    onClick={() => handleAnswerClick()}
+                  >
+                    Answer Question
+                  </button>
+                </div>
+                <div className={styles.questionText}>{question.ask}</div>
                 <div className={styles.questionMeta}>
+                  <img
+                    src={getUserPicture(question.asker)}
+                    alt={getUserName(question.asker)}
+                    className={styles.questionAuthorAvatar}
+                  />
                   <span className={styles.questionAuthor}>
                     {getUserName(question.asker)}
                   </span>
@@ -241,23 +162,9 @@ export default function QuestionDetail() {
                     asked {formatDate(question.created_at)}
                   </span>
                 </div>
-              </div>
-              <div className={styles.dropdownContainer}>
-                <button
-                  className={styles.dropdownButton}
-                  onClick={handleDropdownToggle}
-                  aria-label="More options"
-                >
-                  <AiOutlineMore size={20} />
-                </button>
-                {isDropdownOpen && (
-                  <div className={styles.dropdownMenu}>
-                    <button
-                      className={styles.dropdownItem}
-                      onClick={handleAnswerClick}
-                    >
-                      Answer
-                    </button>
+                {question.image_url && (
+                  <div className={styles.questionImage}>
+                    <img src={question.image_url} alt="Question attachment" />
                   </div>
                 )}
               </div>
@@ -269,12 +176,6 @@ export default function QuestionDetail() {
               <h3 className={styles.answersTitle}>
                 {answers.length} {answers.length === 1 ? "Answer" : "Answers"}
               </h3>
-              <button
-                className={styles.answerButton}
-                onClick={() => handleAnswerClick()}
-              >
-                Answer Question
-              </button>
             </div>
             {answers.length > 0 ? (
               answers.map((answer) => (
@@ -309,7 +210,7 @@ export default function QuestionDetail() {
             )}
           </div>
         </div>
-      </main>
+      </div>
 
       <AnswerFormModal
         isOpen={isAnswerModalOpen}
@@ -318,6 +219,6 @@ export default function QuestionDetail() {
         userName={getUserNameDisplay()}
         questionId={question.id}
       />
-    </div>
+    </AuthenticatedLayout>
   );
 }

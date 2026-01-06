@@ -7,7 +7,7 @@ import {
   IMAGE_UPLOAD_LIMITS,
 } from "../api/uploadService";
 import { getErrorMessage } from "../types/errors";
-import type { QuestionCreate } from "../api/questionService";
+import type { QuestionCreate, QuestionResponse } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
 import styles from "./QuestionFormModal.module.css";
 
@@ -18,6 +18,8 @@ interface QuestionFormModalProps {
   userName: string;
   userPicture: string;
   defaultTopicId?: number;
+  questionId?: number;
+  initialQuestion?: QuestionResponse;
 }
 
 export default function QuestionFormModal({
@@ -27,7 +29,10 @@ export default function QuestionFormModal({
   userName,
   userPicture,
   defaultTopicId,
+  questionId,
+  initialQuestion,
 }: QuestionFormModalProps) {
+  const isEditMode = !!questionId && !!initialQuestion;
   const [questionText, setQuestionText] = useState("");
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
   const [topics, setTopics] = useState<TopicResponse[]>([]);
@@ -58,8 +63,22 @@ export default function QuestionFormModal({
   useEffect(() => {
     if (isOpen) {
       loadTopics();
+      // Pre-populate form if in edit mode
+      if (isEditMode && initialQuestion) {
+        setQuestionText(initialQuestion.ask);
+        setSelectedTopicId(initialQuestion.topic.id);
+        if (initialQuestion.image_url) {
+          setImagePreview(initialQuestion.image_url);
+        }
+      } else {
+        // Reset form for create mode
+        setQuestionText("");
+        setSelectedTopicId(null);
+        setImagePreview(null);
+        setSelectedFile(null);
+      }
     }
-  }, [isOpen, loadTopics]);
+  }, [isOpen, loadTopics, isEditMode, initialQuestion]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -123,13 +142,39 @@ export default function QuestionFormModal({
         setIsUploading(false);
       }
 
-      const questionData: QuestionCreate = {
-        topic_id: selectedTopicId,
-        ask: questionText.trim(),
-        image_url: imageUrl,
-      };
+      if (isEditMode && questionId) {
+        // Update existing question
+        const updateData: {
+          topic_id?: number;
+          ask?: string;
+          image_url?: string | null;
+        } = {
+          topic_id: selectedTopicId,
+          ask: questionText.trim(),
+        };
 
-      await questionService.createQuestion(questionData);
+        // Only include image_url if a new image was uploaded, or if we want to remove it
+        if (selectedFile) {
+          updateData.image_url = imageUrl;
+        } else if (!imagePreview && initialQuestion?.image_url) {
+          // If preview was removed and there was an original image, remove it
+          updateData.image_url = null;
+        } else if (imagePreview === initialQuestion?.image_url) {
+          // Keep existing image - don't include image_url in update
+          delete updateData.image_url;
+        }
+
+        await questionService.updateQuestion(questionId, updateData);
+      } else {
+        // Create new question
+        const questionData: QuestionCreate = {
+          topic_id: selectedTopicId,
+          ask: questionText.trim(),
+          image_url: imageUrl,
+        };
+        await questionService.createQuestion(questionData);
+      }
+
       setQuestionText("");
       setSelectedTopicId(topics.length > 0 ? topics[0].id : null);
       setSelectedFile(null);
@@ -152,13 +197,18 @@ export default function QuestionFormModal({
     onClose();
   };
 
+  const handleRemoveExistingImage = () => {
+    setImagePreview(null);
+    setSelectedFile(null);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className={styles.modalOverlay} onClick={handleCancel}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2>Question Form</h2>
+          <h2>{isEditMode ? "Edit Question" : "Question Form"}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -222,12 +272,16 @@ export default function QuestionFormModal({
             <div className={styles.imagePreview}>
               <img
                 src={imagePreview}
-                alt="Preview"
+                alt={isEditMode ? "Current image" : "Preview"}
                 className={styles.previewImage}
               />
               <button
                 type="button"
-                onClick={handleRemoveImage}
+                onClick={
+                  isEditMode && imagePreview === initialQuestion?.image_url
+                    ? handleRemoveExistingImage
+                    : handleRemoveImage
+                }
                 className={styles.removeImageButton}
                 disabled={isLoading}
               >
@@ -255,7 +309,11 @@ export default function QuestionFormModal({
               {isUploading
                 ? "Uploading image..."
                 : isLoading
-                ? "Adding..."
+                ? isEditMode
+                  ? "Updating..."
+                  : "Adding..."
+                : isEditMode
+                ? "Update Question"
                 : "Add Question"}
             </button>
           </div>

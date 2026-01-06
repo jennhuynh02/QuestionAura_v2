@@ -1,115 +1,11 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f1f2f2;
-  color: #282829;
-}
-
-.navbar {
-  height: 60px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 60px 0 40px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.logo {
-  font-family: "Georgia", serif;
-  font-size: 24px;
-  color: #b92b27;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.userActions {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-shrink: 0;
-}
-
-.userDropdown {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.profilePic {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #ddd;
-  transition: opacity 0.2s ease;
-}
-
-.profilePic:hover {
-  opacity: 0.8;
-}
-
-.dropdownMenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 4px;
-  background: white;
-  border: 1px solid #dee0e1;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 150px;
-  z-index: 1000;
-  overflow: hidden;
-}
-
-.dropdownMenu::before {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: transparent;
-}
-
-.dropdownItem {
-  width: 100%;
-  padding: 12px 16px;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  color: #282829;
-  transition: background-color 0.2s ease;
-  display: block;
-}
-
-.dropdownItem:hover {
-  background-color: #f7f7f8;
-}
-
-.mainLayout {
-  display: flex;
-  justify-content: center;
-  max-width: 1400px;
-  margin: 20px auto;
-  width: 100%;
-  padding: 0 20px;
-}
-
 .content {
   flex: 1;
-  max-width: 800px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .topicHeader {
@@ -118,31 +14,55 @@
   border-radius: 8px;
   border: 1px solid #dee0e1;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.backButton {
-  background: none;
-  border: none;
-  color: #b92b27;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 16px;
+.topicTitleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.topicLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #939598;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.topicTitleRow {
   display: flex;
   align-items: center;
-  gap: 4px;
-  transition: opacity 0.2s ease;
+  gap: 12px;
 }
 
-.backButton:hover {
-  opacity: 0.8;
+.topicTitleImage {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .topicTitle {
-  font-size: 32px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 500;
   color: #282829;
-  margin: 0 0 8px 0;
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .topicDescription {
@@ -150,32 +70,8 @@
   color: #636466;
   margin: 0;
   line-height: 1.5;
-}
-
-.postInput {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #dee0e1;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.postInput:hover {
-  border-color: #b9b9b9;
-}
-
-.postInputPrompt {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #939598;
-  font-size: 15px;
-  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .askQuestionBtn {
@@ -189,6 +85,7 @@
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .askQuestionBtn:hover {
@@ -234,15 +131,19 @@
   text-align: center;
   color: #939598;
   font-size: 16px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 200px;
   font-size: 18px;
   color: #636466;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Pagination */
@@ -268,6 +169,7 @@
   font-weight: 500;
   color: #636466;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .paginationButton:hover:not(:disabled) {
@@ -290,5 +192,6 @@
   font-weight: 500;
   min-width: 100px;
   text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
-

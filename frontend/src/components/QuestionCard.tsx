@@ -1,13 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { answerService } from "../api/answerService";
 import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
-import AnswerFormModal from "./AnswerFormModal";
 import styles from "./QuestionCard.module.css";
 import type { UserResponse } from "../api/userService";
-import { AiOutlineMore } from "react-icons/ai";
 
 interface QuestionCardProps {
   question: QuestionResponse;
@@ -18,7 +16,6 @@ export default function QuestionCard({ question }: QuestionCardProps) {
   const { user, isAuthenticated } = useAuth0();
   const [answers, setAnswers] = useState<AnswerResponse[]>([]);
   const [isLoadingAnswers, setIsLoadingAnswers] = useState(false);
-  const [isAnswerModalOpen, setIsAnswerModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Check if user is using demo login
@@ -29,33 +26,33 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     : null;
   const currentUser = isDemoMode ? demoUser : user;
 
-  const loadAnswers = useCallback(async () => {
-    setIsLoadingAnswers(true);
-    try {
-      const answersData = await answerService.getAllAnswers({
-        question_id: question.id,
-      });
-      setAnswers(answersData);
-    } catch (err) {
-      console.error("Failed to load answers:", err);
-    } finally {
-      setIsLoadingAnswers(false);
-    }
-  }, [question.id]);
-
   useEffect(() => {
+    const loadAnswers = async () => {
+      setIsLoadingAnswers(true);
+      try {
+        const answersData = await answerService.getAllAnswers({
+          question_id: question.id,
+        });
+        setAnswers(answersData);
+      } catch (err) {
+        console.error("Failed to load answers:", err);
+      } finally {
+        setIsLoadingAnswers(false);
+      }
+    };
+
     loadAnswers();
-  }, [loadAnswers]);
+  }, [question.id]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      if (isDropdownOpen) {
-        setIsDropdownOpen(false);
-      }
+      setIsDropdownOpen(false);
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    if (isDropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
   }, [isDropdownOpen]);
 
   const formatDate = (dateString: string) => {
@@ -76,15 +73,20 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     return user?.username || user?.email || "User";
   };
 
-  const getUserNameDisplay = () => {
-    if (!currentUser) return "Guest User";
+  const isQuestionAuthor = (): boolean => {
+    if (!currentUser || !question.asker) return false;
 
-    // Auth0 User type has name property, UserResponse has username
-    if ("name" in currentUser && currentUser.name) {
-      return currentUser.name;
+    // For demo users: compare database IDs
+    if (isDemoMode && "id" in currentUser) {
+      return currentUser.id === question.asker.id;
     }
 
-    return currentUser.username || currentUser.email || "Guest User";
+    // For Auth0 users: compare auth0_id
+    if ("sub" in currentUser && question.asker.auth0_id) {
+      return currentUser.sub === question.asker.auth0_id;
+    }
+
+    return false;
   };
 
   const handleCardClick = () => {
@@ -96,92 +98,66 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleAnswerClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDropdownOpen(false);
-    setIsAnswerModalOpen(true);
-  };
-
-  const handleAnswerSubmitted = () => {
-    loadAnswers();
-  };
-
   return (
-    <>
-      <div className={styles.questionCard} onClick={handleCardClick}>
-        <div className={styles.questionHeader}>
-          <div className={styles.questionHeaderTop}>
-            <div className={styles.questionText}>{question.ask}</div>
-            <div className={styles.dropdownContainer}>
-              <button
-                className={styles.dropdownButton}
-                onClick={handleDropdownToggle}
-                aria-label="More options"
-              >
-                <AiOutlineMore size={20} />
-              </button>
+    <div className={styles.questionCard} onClick={handleCardClick}>
+      <div className={styles.questionHeader}>
+        <div className={styles.questionHeaderTop}>
+          <div className={styles.questionText}>{question.ask}</div>
+          {isQuestionAuthor() && (
+            <div
+              className={styles.dropdownContainer}
+              onClick={handleDropdownToggle}
+            >
+              <button className={styles.dropdownButton}>⋯</button>
               {isDropdownOpen && (
                 <div className={styles.dropdownMenu}>
                   <button
                     className={styles.dropdownItem}
-                    onClick={handleAnswerClick}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/question/${question.id}`);
+                    }}
                   >
-                    Answer
+                    View Question
                   </button>
                 </div>
               )}
             </div>
-          </div>
-          {question.image_url && (
-            <div className={styles.questionImage}>
-              <img src={question.image_url} alt="Question attachment" />
-            </div>
           )}
-          <div className={styles.topicBadge}>{question.topic.name}</div>
         </div>
+        <div className={styles.topicBadge}>{question.topic.name}</div>
+      </div>
 
-        {answers.length > 0 && (
-          <div className={styles.answersSection}>
-            <div className={styles.answer}>
+      {answers.length > 0 && (
+        <div className={styles.answersSection}>
+          {answers.map((answer) => (
+            <div key={answer.id} className={styles.answer}>
               <div className={styles.answerHeader}>
                 <img
-                  src={getUserPicture(answers[0].responder)}
-                  alt={getUserName(answers[0].responder)}
+                  src={getUserPicture(answer.responder)}
+                  alt={getUserName(answer.responder)}
                   className={styles.answerAvatar}
                 />
                 <div className={styles.answerMeta}>
                   <span className={styles.answerAuthor}>
-                    {getUserName(answers[0].responder)}
+                    {getUserName(answer.responder)}
                   </span>
                   <span className={styles.answerDate}>
-                    updated {formatDate(answers[0].updated_at)}
+                    updated {formatDate(answer.updated_at)}
                   </span>
                 </div>
               </div>
-              <div className={styles.answerContent}>{answers[0].response}</div>
-              {answers[0].image_url && (
-                <div className={styles.answerImage}>
-                  <img src={answers[0].image_url} alt="Answer attachment" />
-                </div>
-              )}
+              <div className={styles.answerContent}>{answer.response}</div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+      )}
 
-        {!isLoadingAnswers && answers.length === 0 && (
-          <div className={styles.noAnswers}>
-            No answers yet. Be the first to answer!
-          </div>
-        )}
-      </div>
-
-      <AnswerFormModal
-        isOpen={isAnswerModalOpen}
-        onClose={() => setIsAnswerModalOpen(false)}
-        onSubmit={handleAnswerSubmitted}
-        userName={getUserNameDisplay()}
-        questionId={question.id}
-      />
-    </>
+      {!isLoadingAnswers && answers.length === 0 && (
+        <div className={styles.noAnswers}>
+          No answers yet. Be the first to answer!
+        </div>
+      )}
+    </div>
   );
 }
