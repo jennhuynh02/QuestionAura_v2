@@ -173,6 +173,11 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                 </div>
               </div>
               <div className={styles.answerContent}>{answer.response}</div>
+              {answer.image_url && (
+                <div className={styles.answerImage}>
+                  <img src={answer.image_url} alt="Answer attachment" />
+                </div>
+              )}
             </div>
           ))}
         </div>
