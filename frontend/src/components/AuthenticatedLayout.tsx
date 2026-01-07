@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaLinkedin, FaGithub, FaCopy } from "react-icons/fa";
 import { topicService } from "../api/topicService";
 import { questionService } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
@@ -72,6 +72,7 @@ export default function AuthenticatedLayout({
   const [searchResults, setSearchResults] = useState<{
     questions: QuestionResponse[];
   }>({ questions: [] });
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -210,6 +211,18 @@ export default function AuthenticatedLayout({
   const topicMatch = location.pathname.match(/^\/topic\/(\d+)$/);
   const currentTopicId = topicMatch ? parseInt(topicMatch[1], 10) : null;
 
+  const handleCopyLink = async (url: string, linkType: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(linkType);
+      setTimeout(() => setCopiedLink(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
+  };
+
+  const openLink = (url: string) => window.open(url, "_blank");
+
   return (
     <div className={styles.container}>
       {/* Navbar */}
@@ -334,6 +347,65 @@ export default function AuthenticatedLayout({
 
         {/* Right Sidebar */}
         <aside className={styles.rightSidebar}>
+          {/* Author Links Widget */}
+          <div className={styles.widget}>
+            <div className={styles.widgetTitle}>Visit the author</div>
+            <div className={styles.authorLinksContainer}>
+              {/* LinkedIn Link */}
+              <div className={styles.authorLinkRow}>
+                <FaLinkedin
+                  className={`${styles.authorLinkIcon} ${styles.linkedinIcon}`}
+                  onClick={() => openLink("https://www.linkedin.com/in/jennhuynh02/")}
+                />
+                <span
+                  className={styles.authorLinkText}
+                  onClick={() => openLink("https://www.linkedin.com/in/jennhuynh02/")}
+                >
+                  linkedin.com/in/jennhuynh02
+                </span>
+                <button
+                  className={styles.copyButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink("https://www.linkedin.com/in/jennhuynh02/", "linkedin");
+                  }}
+                  title="Copy link"
+                >
+                  <FaCopy className={styles.copyIcon} />
+                </button>
+                {copiedLink === "linkedin" && (
+                  <span className={styles.copiedFeedback}>Copied!</span>
+                )}
+              </div>
+              {/* GitHub Link */}
+              <div className={styles.authorLinkRow}>
+                <FaGithub
+                  className={`${styles.authorLinkIcon} ${styles.githubIcon}`}
+                  onClick={() => openLink("https://github.com/jennhuynh02")}
+                />
+                <span
+                  className={styles.authorLinkText}
+                  onClick={() => openLink("https://github.com/jennhuynh02")}
+                >
+                  github.com/jennhuynh02
+                </span>
+                <button
+                  className={styles.copyButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink("https://github.com/jennhuynh02", "github");
+                  }}
+                  title="Copy link"
+                >
+                  <FaCopy className={styles.copyIcon} />
+                </button>
+                {copiedLink === "github" && (
+                  <span className={styles.copiedFeedback}>Copied!</span>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className={styles.widget}>
             <div className={styles.widgetTitle}>Schedule a Meeting</div>
             <div className={styles.calendlyWidget}>

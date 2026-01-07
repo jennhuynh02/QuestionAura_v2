@@ -277,7 +277,7 @@
 }
 
 .rightSidebar {
-  width: 280px;
+  width: fit-content;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -314,6 +314,107 @@
   height: 700px;
   border: none;
   border-radius: 4px;
+}
+
+/* Author Links Widget */
+.authorLinksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.authorLinkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  position: relative;
+}
+
+.authorLinkIcon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.authorLinkIcon:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.linkedinIcon {
+  color: #0077b5;
+}
+
+.githubIcon {
+  color: #24292e;
+}
+
+.authorLinkText {
+  flex: 1;
+  font-size: 13px;
+  color: #636466;
+  cursor: pointer;
+  transition: color 0.2s;
+  word-break: break-all;
+}
+
+.authorLinkText:hover {
+  color: #b92b27;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.copyButton:hover {
+  opacity: 0.7;
+}
+
+.copyIcon {
+  width: 14px;
+  height: 14px;
+  color: #939598;
+}
+
+.copiedFeedback {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: #b92b27;
+  font-weight: 500;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Search Results Dropdown */
