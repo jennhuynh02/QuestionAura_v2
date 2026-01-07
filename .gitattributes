@@ -1,0 +1,37 @@
+# Explicitly declare files that will always have LF line endings on checkout.
+* text=auto
+
+# Python files
+*.py linguist-detectable=true
+*.pyw linguist-detectable=true
+*.pyi linguist-detectable=true
+
+# TypeScript/JavaScript files
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
+*.js linguist-detectable=true
+*.jsx linguist-detectable=true
+
+# JSON files
+*.json linguist-detectable=true
+
+# CSS files
+*.css linguist-detectable=true
+*.module.css linguist-detectable=true
+
+# Markdown files
+*.md linguist-detectable=true
+
+# YAML files
+*.yaml linguist-detectable=true
+*.yml linguist-detectable=true
+
+# Shell scripts
+*.sh linguist-detectable=true
+
+# SQL files
+*.sql linguist-detectable=true
+
+# Ensure Python files are always detected as Python
+backend/**/*.py linguist-language=Python
+
