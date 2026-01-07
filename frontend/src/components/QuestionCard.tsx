@@ -147,6 +147,12 @@ export default function QuestionCard({ question }: QuestionCardProps) {
         )}
       </div>
 
+      {question.image_url && (
+        <div className={styles.questionImage}>
+          <img src={question.image_url} alt="Question attachment" />
+        </div>
+      )}
+
       {answers.length > 0 && (
         <div className={styles.answersSection}>
           {answers.map((answer) => (
