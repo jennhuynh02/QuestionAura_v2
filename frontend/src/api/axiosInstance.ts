@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getDemoToken } from "../contexts/authStore";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -9,7 +10,7 @@ const axiosInstance = axios.create({
 
 // Add demo token to requests if available
 axiosInstance.interceptors.request.use((config) => {
-  const demoToken = localStorage.getItem("demo_token");
+  const demoToken = getDemoToken();
   if (demoToken && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${demoToken}`;
   }

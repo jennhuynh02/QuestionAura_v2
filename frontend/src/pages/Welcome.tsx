@@ -5,6 +5,7 @@ import styles from "./Welcome.module.css";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { userService, type UserCreate } from "../api/userService";
 import { getErrorMessage } from "../types/errors";
+import { useAuth } from "../hooks/useAuth";
 
 type PendingSignupData = {
   auth0_id: string;
@@ -16,6 +17,7 @@ export default function Welcome() {
   const { loginWithPopup, getAccessTokenSilently, getIdTokenClaims } =
     useAuth0();
   const navigate = useNavigate();
+  const { setDemoAuth } = useAuth();
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,9 +86,8 @@ export default function Welcome() {
     try {
       const response = await userService.demoLogin();
 
-      // Store the demo token in localStorage
-      localStorage.setItem("demo_token", response.access_token);
-      localStorage.setItem("demo_user", JSON.stringify(response.user));
+      // Store the demo token and user in context
+      setDemoAuth(response.access_token, response.user);
 
       navigate("/");
     } catch (err) {
@@ -168,7 +169,10 @@ export default function Welcome() {
                 placeholder="First name"
                 className={styles.usernameInput}
                 autoFocus
-                onKeyPress={(e) => e.key === "Enter" && document.getElementById("lastNameInput")?.focus()}
+                onKeyPress={(e) =>
+                  e.key === "Enter" &&
+                  document.getElementById("lastNameInput")?.focus()
+                }
               />
               <input
                 id="lastNameInput"
@@ -204,9 +208,7 @@ export default function Welcome() {
           </p>
         </div>
 
-        {error && !showNameModal && (
-          <div className={styles.error}>{error}</div>
-        )}
+        {error && !showNameModal && <div className={styles.error}>{error}</div>}
 
         <div className={styles.content}>
           <div className={styles.leftCol}>

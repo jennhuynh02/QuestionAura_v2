@@ -3,23 +3,19 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useSearchParams } from "react-router-dom";
 import { questionService } from "../api/questionService";
 import type { QuestionResponse } from "../api/questionService";
-import type { UserResponse } from "../api/userService";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./Home.module.css";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth0();
+  const { demoAuth } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Check if user is using demo login
-  const demoUserStr = localStorage.getItem("demo_user");
-  const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode
-    ? (JSON.parse(demoUserStr) as UserResponse)
-    : null;
-
-  const currentUser = isDemoMode ? demoUser : user;
+  const isDemoMode = !isAuthenticated && !!demoAuth.user;
+  const currentUser = isDemoMode ? demoAuth.user : user;
 
   const [questions, setQuestions] = useState<QuestionResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -5,10 +5,10 @@ import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
-import type { UserResponse } from "../api/userService";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./TopicDetail.module.css";
+import { useAuth } from "../hooks/useAuth";
 
 // Import topic images
 import codingImg from "../assets/coding.jpg";
@@ -46,16 +46,12 @@ const getTopicImage = (topicName: string): string => {
 export default function TopicDetail() {
   const { id } = useParams<{ id: string }>();
   const { user, isAuthenticated } = useAuth0();
+  const { demoAuth } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Check if user is using demo login
-  const demoUserStr = localStorage.getItem("demo_user");
-  const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode
-    ? (JSON.parse(demoUserStr) as UserResponse)
-    : null;
-
-  const currentUser = isDemoMode ? demoUser : user;
+  const isDemoMode = !isAuthenticated && !!demoAuth.user;
+  const currentUser = isDemoMode ? demoAuth.user : user;
 
   const [questions, setQuestions] = useState<QuestionResponse[]>([]);
   const [topic, setTopic] = useState<TopicResponse | null>(null);

@@ -6,6 +6,7 @@ import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
 import styles from "./QuestionCard.module.css";
 import type { UserResponse } from "../api/userService";
+import { useAuth } from "../hooks/useAuth";
 
 interface QuestionCardProps {
   question: QuestionResponse;
@@ -14,17 +15,14 @@ interface QuestionCardProps {
 export default function QuestionCard({ question }: QuestionCardProps) {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth0();
+  const { demoAuth } = useAuth();
   const [answers, setAnswers] = useState<AnswerResponse[]>([]);
   const [isLoadingAnswers, setIsLoadingAnswers] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Check if user is using demo login
-  const demoUserStr = localStorage.getItem("demo_user");
-  const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode
-    ? JSON.parse(demoUserStr)
-    : null;
-  const currentUser = isDemoMode ? demoUser : user;
+  const isDemoMode = !isAuthenticated && !!demoAuth.user;
+  const currentUser = isDemoMode ? demoAuth.user : user;
 
   useEffect(() => {
     const loadAnswers = async () => {
@@ -68,7 +66,9 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     const firstName = user?.first_name || "";
     const lastName = user?.last_name || "";
     const name = `${firstName} ${lastName}`.trim() || user?.email || "User";
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=b92b27&color=ffffff`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=b92b27&color=ffffff`;
   };
 
   const getUserName = (user: UserResponse) => {
@@ -142,7 +142,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
             <span className={styles.questionAskerDate}>
               asked {formatDate(question.created_at)}
             </span>
-        <div className={styles.topicBadge}>{question.topic.name}</div>
+            <div className={styles.topicBadge}>{question.topic.name}</div>
           </div>
         )}
       </div>

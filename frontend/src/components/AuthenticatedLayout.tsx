@@ -6,8 +6,8 @@ import { topicService } from "../api/topicService";
 import { questionService } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
-import type { UserResponse } from "../api/userService";
 import styles from "./AuthenticatedLayout.module.css";
+import { useAuth } from "../hooks/useAuth";
 
 // Import topic images
 import codingImg from "../assets/coding.jpg";
@@ -53,13 +53,11 @@ export default function AuthenticatedLayout({
   const { user, logout, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
   const location = useLocation();
+  const { demoAuth, clearDemoAuth } = useAuth();
 
   // Check if user is using demo login
-  const demoUserStr = localStorage.getItem("demo_user");
-  const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode
-    ? (JSON.parse(demoUserStr) as UserResponse)
-    : null;
+  const isDemoMode = !isAuthenticated && !!demoAuth.user;
+  const demoUser = demoAuth.user;
 
   const currentUser = isDemoMode ? demoUser : user;
 
@@ -151,8 +149,7 @@ export default function AuthenticatedLayout({
 
   const handleLogout = () => {
     if (isDemoMode) {
-      localStorage.removeItem("demo_token");
-      localStorage.removeItem("demo_user");
+      clearDemoAuth();
       navigate("/login");
     } else {
       logout({ logoutParams: { returnTo: window.location.origin } });
@@ -355,11 +352,15 @@ export default function AuthenticatedLayout({
               <div className={styles.authorLinkRow}>
                 <FaLinkedin
                   className={`${styles.authorLinkIcon} ${styles.linkedinIcon}`}
-                  onClick={() => openLink("https://www.linkedin.com/in/jennhuynh02/")}
+                  onClick={() =>
+                    openLink("https://www.linkedin.com/in/jennhuynh02/")
+                  }
                 />
                 <span
                   className={styles.authorLinkText}
-                  onClick={() => openLink("https://www.linkedin.com/in/jennhuynh02/")}
+                  onClick={() =>
+                    openLink("https://www.linkedin.com/in/jennhuynh02/")
+                  }
                 >
                   linkedin.com/in/jennhuynh02
                 </span>
@@ -367,7 +368,10 @@ export default function AuthenticatedLayout({
                   className={styles.copyButton}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleCopyLink("https://www.linkedin.com/in/jennhuynh02/", "linkedin");
+                    handleCopyLink(
+                      "https://www.linkedin.com/in/jennhuynh02/",
+                      "linkedin"
+                    );
                   }}
                   title="Copy link"
                 >

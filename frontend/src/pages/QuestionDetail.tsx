@@ -9,19 +9,17 @@ import type { UserResponse } from "../api/userService";
 import Loading from "../components/Loading";
 import AnswerFormModal from "../components/AnswerFormModal";
 import styles from "./QuestionDetail.module.css";
+import { useAuth } from "../hooks/useAuth";
 
 export default function QuestionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth0();
+  const { demoAuth } = useAuth();
 
   // Check if user is using demo login
-  const demoUserStr = localStorage.getItem("demo_user");
-  const isDemoMode = !isAuthenticated && demoUserStr;
-  const demoUser: UserResponse | null = isDemoMode
-    ? JSON.parse(demoUserStr)
-    : null;
-  const currentUser = isDemoMode ? demoUser : user;
+  const isDemoMode = !isAuthenticated && !!demoAuth.user;
+  const currentUser = isDemoMode ? demoAuth.user : user;
 
   const [question, setQuestion] = useState<QuestionResponse | null>(null);
   const [answers, setAnswers] = useState<AnswerResponse[]>([]);

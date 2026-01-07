@@ -6,10 +6,40 @@ import QuestionDetail from "./pages/QuestionDetail";
 import TopicDetail from "./pages/TopicDetail";
 import Loading from "./components/Loading";
 import AuthenticatedLayout from "./components/AuthenticatedLayout";
+import { useAuth } from "./hooks/useAuth";
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth0();
+  const { isDemoAuthenticated } = useAuth();
+
+  return (
+    <Routes>
+      {/* Public route - NO sidebars, NO AuthenticatedLayout */}
+      <Route path="/login" element={<Welcome />} />
+
+      {/* Authenticated routes - WITH sidebars via AuthenticatedLayout */}
+      <Route
+        path="/*"
+        element={
+          isAuthenticated || isDemoAuthenticated ? (
+            <AuthenticatedLayout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/question/:id" element={<QuestionDetail />} />
+                <Route path="/topic/:id" element={<TopicDetail />} />
+              </Routes>
+            </AuthenticatedLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+    </Routes>
+  );
+}
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
-  const isDemoAuthenticated = !!localStorage.getItem("demo_token");
+  const { isLoading } = useAuth0();
 
   if (isLoading) {
     return <Loading />;
@@ -17,28 +47,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public route - NO sidebars, NO AuthenticatedLayout */}
-        <Route path="/login" element={<Welcome />} />
-        
-        {/* Authenticated routes - WITH sidebars via AuthenticatedLayout */}
-        <Route
-          path="/*"
-          element={
-            isAuthenticated || isDemoAuthenticated ? (
-              <AuthenticatedLayout>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/question/:id" element={<QuestionDetail />} />
-                  <Route path="/topic/:id" element={<TopicDetail />} />
-                </Routes>
-              </AuthenticatedLayout>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
