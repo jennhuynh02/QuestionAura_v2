@@ -39,5 +39,6 @@ SEED_ANSWER_ID_END = 348
 # Demo User
 DEMO_USER_AUTH0_ID = "demo-user-12345"
 DEMO_USER_EMAIL = "demo@questionaura.com"
-DEMO_USER_USERNAME = "demo"
+DEMO_USER_FIRST_NAME = "Demo"
+DEMO_USER_LAST_NAME = "User"
 

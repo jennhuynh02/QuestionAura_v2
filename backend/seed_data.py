@@ -27,19 +27,19 @@ TOPICS = [
 ]
 
 USERS = [
-    {"id": 1, "username": "demo", "email": "demo@questionaura.com", "auth0_id": "demo-user-12345"},
-    {"id": 101, "username": "wanderer", "email": "guestuser@questionaura.com", "auth0_id": "seed-user-101"},
-    {"id": 102, "username": "newton", "email": "isaacstein@gmail.com", "auth0_id": "seed-user-102"},
-    {"id": 103, "username": "waynebrazy", "email": "allthewayne@yahoo.com", "auth0_id": "seed-user-103"},
-    {"id": 104, "username": "jamestheband", "email": "jayjames@hotmail.com", "auth0_id": "seed-user-104"},
-    {"id": 105, "username": "dadmode", "email": "imthedad@me.com", "auth0_id": "seed-user-105"},
-    {"id": 106, "username": "miguelito", "email": "jmiggs@hello.com", "auth0_id": "seed-user-106"},
-    {"id": 107, "username": "cheflean", "email": "shaphen@gmail.com", "auth0_id": "seed-user-107"},
-    {"id": 108, "username": "charlie", "email": "charles@dude.com", "auth0_id": "seed-user-108"},
-    {"id": 109, "username": "mikey", "email": "michael@hello.com", "auth0_id": "seed-user-109"},
-    {"id": 110, "username": "ray", "email": "gin@hey.com", "auth0_id": "seed-user-110"},
-    {"id": 111, "username": "jennwynn", "email": "jenjen@hello.com", "auth0_id": "seed-user-111"},
-    {"id": 112, "username": "davidfam", "email": "david@gmail.com", "auth0_id": "seed-user-112"},
+    {"id": 1, "first_name": "Demo", "last_name": "User", "email": "demo@questionaura.com", "auth0_id": "demo-user-12345"},
+    {"id": 101, "first_name": "Guest", "last_name": "User", "email": "guestuser@questionaura.com", "auth0_id": "seed-user-101"},
+    {"id": 102, "first_name": "Isaac", "last_name": "Newdon", "email": "isaacstein@gmail.com", "auth0_id": "seed-user-102"},
+    {"id": 103, "first_name": "Wayne", "last_name": "Brazy", "email": "allthewayne@yahoo.com", "auth0_id": "seed-user-103"},
+    {"id": 104, "first_name": "James", "last_name": "Bands", "email": "jayjames@hotmail.com", "auth0_id": "seed-user-104"},
+    {"id": 105, "first_name": "Darrick", "last_name": "Yawns", "email": "imthedad@me.com", "auth0_id": "seed-user-105"},
+    {"id": 106, "first_name": "Miguel", "last_name": "Juan", "email": "jmiggs@hello.com", "auth0_id": "seed-user-106"},
+    {"id": 107, "first_name": "Chef", "last_name": "Lean", "email": "shaphen@gmail.com", "auth0_id": "seed-user-107"},
+    {"id": 108, "first_name": "Charles", "last_name": "Choose", "email": "charles@dude.com", "auth0_id": "seed-user-108"},
+    {"id": 109, "first_name": "Michael", "last_name": "Murr", "email": "michael@hello.com", "auth0_id": "seed-user-109"},
+    {"id": 110, "first_name": "Ray", "last_name": "Gee", "email": "gin@hey.com", "auth0_id": "seed-user-110"},
+    {"id": 111, "first_name": "Jenn", "last_name": "Wynn", "email": "jenjen@hello.com", "auth0_id": "seed-user-111"},
+    {"id": 112, "first_name": "David", "last_name": "Fam", "email": "david@gmail.com", "auth0_id": "seed-user-112"},
 ]
 
 QUESTIONS = [

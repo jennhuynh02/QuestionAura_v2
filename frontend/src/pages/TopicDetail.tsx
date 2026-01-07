@@ -131,14 +131,15 @@ export default function TopicDetail() {
     if (currentUser && "picture" in currentUser && currentUser.picture) {
       return currentUser.picture;
     }
-    // For demo users, use username for avatar
+    // For demo users or UserResponse, use first_name and last_name for avatar
     if (
-      isDemoMode &&
       currentUser &&
-      "username" in currentUser &&
-      currentUser.username
+      ("first_name" in currentUser || "last_name" in currentUser)
     ) {
-      return `https://ui-avatars.com/api/?name=${currentUser.username}`;
+      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const lastName = "last_name" in currentUser ? currentUser.last_name : "";
+      const fullName = `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`;
     }
     // Fallback to email-based avatar
     return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
@@ -151,9 +152,11 @@ export default function TopicDetail() {
     if ("name" in currentUser && currentUser.name) {
       return currentUser.name;
     }
-    // For UserResponse (has username property)
-    if ("username" in currentUser && currentUser.username) {
-      return currentUser.username;
+    // For UserResponse (has first_name and last_name properties)
+    if ("first_name" in currentUser || "last_name" in currentUser) {
+      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const lastName = "last_name" in currentUser ? currentUser.last_name : "";
+      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
     }
     // Fallback to email
     return currentUser.email || "Guest User";

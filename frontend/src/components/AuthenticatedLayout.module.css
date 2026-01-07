@@ -192,15 +192,15 @@
 
 .mainLayout {
   display: flex;
-  max-width: 1400px;
+  max-width: min-content;
   margin: 20px 0 20px 20px;
-  width: 100%;
   gap: 24px;
   padding: 0 20px;
 }
 
 .sidebar {
   width: 180px;
+  min-width: 180px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -209,7 +209,7 @@
   align-self: flex-start;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
 }
 
 .sidebarItem {
@@ -222,9 +222,8 @@
   align-items: center;
   gap: 10px;
   transition: all 0.2s ease;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   min-width: 0;
+  white-space: normal;
 }
 
 .sidebarItem:hover {
@@ -246,12 +245,12 @@
 }
 
 .sidebarItemText {
-  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
+  word-break: normal;
+  white-space: normal;
   min-width: 0;
   flex: 1;
+  line-height: 1.4;
 }
 
 .content {
@@ -259,9 +258,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 0;
-  max-width: 100%;
-  overflow-x: hidden;
+  min-width: fit-content;
 }
 
 .rightSidebar {

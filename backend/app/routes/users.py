@@ -24,7 +24,7 @@ async def sync_user(
 ):
     """
     Sync or create user from Auth0 authentication.
-    Requires user data in request body including username.
+    Requires user data in request body including first_name and last_name.
     """
     # Security: Ensure token matches the user being synced
     if user_data.auth0_id != payload["sub"]:
@@ -38,25 +38,19 @@ async def sync_user(
         user = db.query(User).filter(User.auth0_id == user_data.auth0_id).first()
         
         if not user:
-            # Check if username is already taken
-            existing_username = db.query(User).filter(User.username == user_data.username).first()
-            if existing_username:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Username is already taken"
-                )
-            
             # Create new user
             user = User(
                 auth0_id=user_data.auth0_id,
-                username=user_data.username,
+                first_name=user_data.first_name,
+                last_name=user_data.last_name,
                 email=user_data.email
             )
             db.add(user)
         else:
-            # Update existing user (but never change username)
+            # Update existing user
             user.email = user_data.email
-            # Note: username cannot be changed after creation
+            user.first_name = user_data.first_name
+            user.last_name = user_data.last_name
         
         db.commit()
         db.refresh(user)
@@ -65,12 +59,7 @@ async def sync_user(
     except IntegrityError as e:
         db.rollback()
         # Handle unique constraint violations
-        if "username" in str(e.orig):
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Username is already taken"
-            )
-        elif "email" in str(e.orig):
+        if "email" in str(e.orig):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Email is already registered"

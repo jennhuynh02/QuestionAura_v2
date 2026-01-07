@@ -26,10 +26,13 @@ class User(Base):
         nullable=False,
     )
 
-    username: Mapped[str] = mapped_column(
-        String(20),
-        unique=True,
-        index=True,
+    first_name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
+
+    last_name: Mapped[str] = mapped_column(
+        String(100),
         nullable=False,
     )
 

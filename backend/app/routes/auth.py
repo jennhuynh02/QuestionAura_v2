@@ -56,7 +56,8 @@ async def demo_login(db: Session = Depends(get_db)):
             "id": demo_user.id,
             "auth0_id": demo_user.auth0_id,
             "email": demo_user.email,
-            "username": demo_user.username
+            "first_name": demo_user.first_name,
+            "last_name": demo_user.last_name
         }
     }
 

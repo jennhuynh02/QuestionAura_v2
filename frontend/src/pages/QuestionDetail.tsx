@@ -65,19 +65,26 @@ export default function QuestionDetail() {
   }, [id, loadQuestion]);
 
   const getUserPicture = (
-    user?: UserResponse | { username?: string; email?: string } | null
+    user?: UserResponse | { first_name?: string; last_name?: string; email?: string } | null
   ) => {
     if (user) {
-      const name = user.username || user.email || "User";
+      const firstName = "first_name" in user ? user.first_name : "";
+      const lastName = "last_name" in user ? user.last_name : "";
+      const name = `${firstName} ${lastName}`.trim() || user.email || "User";
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
     }
     return `https://ui-avatars.com/api/?name=User`;
   };
 
   const getUserName = (
-    user?: UserResponse | { username?: string; email?: string } | null
+    user?: UserResponse | { first_name?: string; last_name?: string; email?: string } | null
   ) => {
-    return user?.username || user?.email || "User";
+    if (user) {
+      const firstName = "first_name" in user ? user.first_name : "";
+      const lastName = "last_name" in user ? user.last_name : "";
+      return `${firstName} ${lastName}`.trim() || user.email || "User";
+    }
+    return "User";
   };
 
   const formatDate = (dateString: string) => {
@@ -92,12 +99,17 @@ export default function QuestionDetail() {
   const getUserNameDisplay = () => {
     if (!currentUser) return "Guest User";
 
-    // Auth0 User type has name property, UserResponse has username
+    // Auth0 User type has name property
     if ("name" in currentUser && currentUser.name) {
       return currentUser.name;
     }
-
-    return currentUser.username || currentUser.email || "Guest User";
+    // UserResponse has first_name and last_name
+    if ("first_name" in currentUser || "last_name" in currentUser) {
+      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const lastName = "last_name" in currentUser ? currentUser.last_name : "";
+      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
+    }
+    return currentUser.email || "Guest User";
   };
 
   const handleAnswerClick = () => {

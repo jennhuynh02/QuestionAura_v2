@@ -65,12 +65,16 @@ export default function QuestionCard({ question }: QuestionCardProps) {
   };
 
   const getUserPicture = (user: UserResponse) => {
-    const name = user?.username || user?.email || "User";
+    const firstName = user?.first_name || "";
+    const lastName = user?.last_name || "";
+    const name = `${firstName} ${lastName}`.trim() || user?.email || "User";
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
   };
 
   const getUserName = (user: UserResponse) => {
-    return user?.username || user?.email || "User";
+    const firstName = user?.first_name || "";
+    const lastName = user?.last_name || "";
+    return `${firstName} ${lastName}`.trim() || user?.email || "User";
   };
 
   const isQuestionAuthor = (): boolean => {

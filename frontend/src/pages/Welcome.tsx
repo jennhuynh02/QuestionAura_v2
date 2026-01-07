@@ -19,22 +19,22 @@ export default function Welcome() {
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showUsernameModal, setShowUsernameModal] = useState(false);
-  const [username, setUsername] = useState("");
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [pendingSignup, setPendingSignup] = useState<PendingSignupData | null>(
     null
   );
 
-  const isValidUsername = (name: string) => {
-    const hasValidChars = /^[a-zA-Z0-9_-]+$/.test(name);
-    const hasValidLength = name.length >= 3 && name.length <= 20;
-    return hasValidChars && hasValidLength;
+  const isValidName = (name: string) => {
+    return name.trim().length >= 1 && name.trim().length <= 100;
   };
 
   const resetModalState = () => {
-    setShowUsernameModal(false);
+    setShowNameModal(false);
     setPendingSignup(null);
-    setUsername("");
+    setFirstName("");
+    setLastName("");
     setError(null);
   };
 
@@ -61,7 +61,7 @@ export default function Welcome() {
           email: claims.email,
           token,
         });
-        setShowUsernameModal(true);
+        setShowNameModal(true);
         return;
       }
 
@@ -97,23 +97,22 @@ export default function Welcome() {
     }
   };
 
-  const handleUsernameSubmit = async () => {
-    if (!pendingSignup || !username) {
-      setError("Please enter a username");
+  const handleNameSubmit = async () => {
+    if (!pendingSignup || !firstName.trim() || !lastName.trim()) {
+      setError("Please enter both first and last name");
       return;
     }
 
-    if (!isValidUsername(username)) {
-      setError(
-        "Username must be 3-20 characters (letters, numbers, _, - only)"
-      );
+    if (!isValidName(firstName) || !isValidName(lastName)) {
+      setError("Names must be between 1 and 100 characters");
       return;
     }
 
     const userData: UserCreate = {
       auth0_id: pendingSignup.auth0_id,
       email: pendingSignup.email,
-      username,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
     };
 
     setError(null);
@@ -137,7 +136,7 @@ export default function Welcome() {
 
       setError(
         isDuplicateUser
-          ? getErrorMessage(err, "Username or email already exists")
+          ? getErrorMessage(err, "Email already exists")
           : "Failed to sync account. Please try again."
       );
     } finally {
@@ -157,19 +156,29 @@ export default function Welcome() {
           </div>
         )}
 
-        {showUsernameModal && (
+        {showNameModal && (
           <div className={styles.syncingOverlay}>
             <div className={styles.usernameModal}>
-              <h2>Choose Your Username</h2>
-              <p>This will be your unique identifier on QuestionAura</p>
+              <h2>Enter Your Name</h2>
+              <p>This will be displayed on your profile</p>
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                placeholder="Enter username (3-20 chars)"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
                 className={styles.usernameInput}
                 autoFocus
-                onKeyPress={(e) => e.key === "Enter" && handleUsernameSubmit()}
+                onKeyPress={(e) => e.key === "Enter" && document.getElementById("lastNameInput")?.focus()}
+              />
+              <input
+                id="lastNameInput"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                className={styles.usernameInput}
+                style={{ marginTop: "10px" }}
+                onKeyPress={(e) => e.key === "Enter" && handleNameSubmit()}
               />
               {error && <div className={styles.error}>{error}</div>}
               <div className={styles.modalButtons}>
@@ -178,8 +187,8 @@ export default function Welcome() {
                 </button>
                 <button
                   className={styles.submitBtn}
-                  onClick={handleUsernameSubmit}
-                  disabled={!username || username.length < 3}
+                  onClick={handleNameSubmit}
+                  disabled={!firstName.trim() || !lastName.trim()}
                 >
                   Continue
                 </button>
@@ -195,7 +204,7 @@ export default function Welcome() {
           </p>
         </div>
 
-        {error && !showUsernameModal && (
+        {error && !showNameModal && (
           <div className={styles.error}>{error}</div>
         )}
 
