@@ -4,7 +4,6 @@ import { useSearchParams } from "react-router-dom";
 import { questionService } from "../api/questionService";
 import type { QuestionResponse } from "../api/questionService";
 import type { UserResponse } from "../api/userService";
-import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./Home.module.css";
@@ -83,13 +82,19 @@ export default function Home() {
       currentUser &&
       ("first_name" in currentUser || "last_name" in currentUser)
     ) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      const fullName = `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=b92b27&color=ffffff`;
+      const fullName =
+        `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        fullName
+      )}&background=b92b27&color=ffffff`;
     }
     // Fallback to email-based avatar
-    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}&background=b92b27&color=ffffff`;
+    return `https://ui-avatars.com/api/?name=${
+      currentUser?.email || "User"
+    }&background=b92b27&color=ffffff`;
   };
 
   const getUserName = () => {
@@ -101,16 +106,19 @@ export default function Home() {
     }
     // For UserResponse (has first_name and last_name properties)
     if ("first_name" in currentUser || "last_name" in currentUser) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
+      return (
+        `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User"
+      );
     }
     // Fallback to email
     return currentUser.email || "Guest User";
   };
 
   return (
-    <AuthenticatedLayout>
+    <>
       <div className={styles.content}>
         <div className={styles.postInput}>
           <div className={styles.postInputPrompt}>
@@ -197,6 +205,6 @@ export default function Home() {
         userName={getUserName()}
         userPicture={getUserPicture()}
       />
-    </AuthenticatedLayout>
+    </>
   );
 }

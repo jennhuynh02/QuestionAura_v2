@@ -40,6 +40,7 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .questionAskerAvatar {
@@ -69,8 +70,7 @@
   font-size: 12px;
   font-weight: 500;
   color: #636466;
-  margin-top: 8px;
-  margin-bottom: 10px;
+  margin-left: auto;
 }
 
 .questionImage {

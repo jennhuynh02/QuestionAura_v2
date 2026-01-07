@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 import { topicService } from "../api/topicService";
 import { questionService } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
@@ -44,12 +45,10 @@ const getTopicImage = (topicName: string): string => {
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
-  activeTopicId?: number | null;
 }
 
 export default function AuthenticatedLayout({
   children,
-  activeTopicId = null,
 }: AuthenticatedLayoutProps) {
   const { user, logout, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
@@ -66,22 +65,36 @@ export default function AuthenticatedLayout({
 
   const [topics, setTopics] = useState<TopicResponse[]>([]);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const [searchType, setSearchType] = useState<"topic" | "question">(
-    "question"
-  );
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryRef = useRef(searchQuery);
-  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchResults, setSearchResults] = useState<{
     questions: QuestionResponse[];
-    topics: TopicResponse[];
-  }>({ questions: [], topics: [] });
+  }>({ questions: [] });
 
   // Keep ref in sync with state
   useEffect(() => {
     searchQueryRef.current = searchQuery;
   }, [searchQuery]);
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isUserDropdownOpen &&
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    if (isUserDropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [isUserDropdownOpen]);
 
   useEffect(() => {
     const loadTopics = async () => {
@@ -96,39 +109,28 @@ export default function AuthenticatedLayout({
   }, [setTopics]);
 
   // Separate function to perform the actual search without updating query state
-  const performSearch = useCallback(
-    async (query: string) => {
-      if (!query.trim()) {
-        setShowSearchResults(false);
-        setSearchResults({ questions: [], topics: [] });
-        return;
-      }
+  const performSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setShowSearchResults(false);
+      setSearchResults({ questions: [] });
+      return;
+    }
 
-      setShowSearchResults(true);
+    setShowSearchResults(true);
 
-      try {
-        if (searchType === "question") {
-          // Search questions
-          const response = await questionService.getAllQuestions({
-            search: query,
-            page: 1,
-            page_size: 10,
-          });
-          setSearchResults({ questions: response.items, topics: [] });
-        } else {
-          // Search topics
-          const filtered = topics.filter((topic) =>
-            topic.name.toLowerCase().includes(query.toLowerCase())
-          );
-          setSearchResults({ questions: [], topics: filtered });
-        }
-      } catch (err) {
-        console.error("Search failed:", err);
-        setSearchResults({ questions: [], topics: [] });
-      }
-    },
-    [searchType, topics]
-  );
+    try {
+      // Search questions only
+      const response = await questionService.getAllQuestions({
+        search: query,
+        page: 1,
+        page_size: 10,
+      });
+      setSearchResults({ questions: response.items });
+    } catch (err) {
+      console.error("Search failed:", err);
+      setSearchResults({ questions: [] });
+    }
+  }, []);
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -137,15 +139,6 @@ export default function AuthenticatedLayout({
     },
     [performSearch]
   );
-
-  // Re-run search when searchType changes (if there's a current query)
-  useEffect(() => {
-    const currentQuery = searchQueryRef.current;
-    if (currentQuery) {
-      performSearch(currentQuery);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchType]); // Only depend on searchType - performSearch is stable due to useCallback
 
   const handleTopicClick = (topicId: number) => {
     navigate(`/topic/${topicId}`);
@@ -175,13 +168,19 @@ export default function AuthenticatedLayout({
       currentUser &&
       ("first_name" in currentUser || "last_name" in currentUser)
     ) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      const fullName = `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=b92b27&color=ffffff`;
+      const fullName =
+        `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        fullName
+      )}&background=b92b27&color=ffffff`;
     }
     // Fallback to email-based avatar
-    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}&background=b92b27&color=ffffff`;
+    return `https://ui-avatars.com/api/?name=${
+      currentUser?.email || "User"
+    }&background=b92b27&color=ffffff`;
   };
 
   const getUserName = () => {
@@ -193,9 +192,12 @@ export default function AuthenticatedLayout({
     }
     // For UserResponse (has first_name and last_name properties)
     if ("first_name" in currentUser || "last_name" in currentUser) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
+      return (
+        `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User"
+      );
     }
     // Fallback to email
     return currentUser.email || "Guest User";
@@ -203,7 +205,10 @@ export default function AuthenticatedLayout({
 
   // Determine if we're on dashboard (home page)
   const isDashboard = location.pathname === "/";
-  const currentTopicId = activeTopicId !== undefined ? activeTopicId : null;
+
+  // Extract topic ID from URL pathname
+  const topicMatch = location.pathname.match(/^\/topic\/(\d+)$/);
+  const currentTopicId = topicMatch ? parseInt(topicMatch[1], 10) : null;
 
   return (
     <div className={styles.container}>
@@ -213,51 +218,11 @@ export default function AuthenticatedLayout({
           Question Aura
         </div>
         <div className={styles.searchBarContainer}>
-          <div
-            className={styles.searchDropdown}
-            onClick={() => setIsSearchDropdownOpen(!isSearchDropdownOpen)}
-          >
-            <span className={styles.searchType}>
-              {searchType === "topic" ? "Topic" : "Question"}
-            </span>
-            <span className={styles.dropdownArrow}>▼</span>
-            {isSearchDropdownOpen && (
-              <div className={styles.searchDropdownMenu}>
-                <div
-                  className={styles.searchDropdownItem}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSearchType("question");
-                    setIsSearchDropdownOpen(false);
-                  }}
-                >
-                  Question{" "}
-                  <span className={styles.searchTypeLabel}>
-                    (Search questions)
-                  </span>
-                </div>
-                <div
-                  className={styles.searchDropdownItem}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSearchType("topic");
-                    setIsSearchDropdownOpen(false);
-                  }}
-                >
-                  Topic{" "}
-                  <span className={styles.searchTypeLabel}>
-                    (Search topics)
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
           <div className={styles.searchBar}>
+            <FaSearch className={styles.searchIcon} />
             <input
               type="text"
-              placeholder={`Search ${
-                searchType === "topic" ? "topics" : "questions"
-              }...`}
+              placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               onFocus={() => searchQuery && setShowSearchResults(true)}
@@ -268,95 +233,50 @@ export default function AuthenticatedLayout({
           {/* Search Results Dropdown */}
           {showSearchResults && (
             <div className={styles.searchResultsDropdown}>
-              {searchType === "question" ? (
+              {searchResults.questions.length > 0 ? (
                 <>
-                  {searchResults.questions.length > 0 ? (
-                    <>
-                      <div className={styles.searchResultsHeader}>
-                        Questions ({searchResults.questions.length})
-                      </div>
-                      {searchResults.questions.map((question) => (
-                        <div
-                          key={question.id}
-                          className={styles.searchResultItem}
-                          onClick={() => {
-                            navigate(`/question/${question.id}`);
-                            setShowSearchResults(false);
-                            setSearchQuery("");
-                          }}
-                        >
-                          {question.topic && (
-                            <div className={styles.searchResultMeta}>
-                              <span className={styles.searchResultTopic}>
-                                {question.topic.name}
-                              </span>
-                            </div>
-                          )}
-                          <div className={styles.searchResultTitle}>
-                            {question.ask}
-                          </div>
+                  <div className={styles.searchResultsHeader}>
+                    Questions ({searchResults.questions.length})
+                  </div>
+                  {searchResults.questions.map((question) => (
+                    <div
+                      key={question.id}
+                      className={styles.searchResultItem}
+                      onClick={() => {
+                        navigate(`/question/${question.id}`);
+                        setShowSearchResults(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      {question.topic && (
+                        <div className={styles.searchResultMeta}>
+                          <span className={styles.searchResultTopic}>
+                            {question.topic.name}
+                          </span>
                         </div>
-                      ))}
-                    </>
-                  ) : (
-                    <div className={styles.searchResultsEmpty}>
-                      No questions found
+                      )}
+                      <div className={styles.searchResultTitle}>
+                        {question.ask}
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </>
               ) : (
-                <>
-                  {searchResults.topics.length > 0 ? (
-                    <>
-                      <div className={styles.searchResultsHeader}>
-                        Topics ({searchResults.topics.length})
-                      </div>
-                      {searchResults.topics.map((topic) => (
-                        <div
-                          key={topic.id}
-                          className={styles.searchResultItem}
-                          onClick={() => {
-                            navigate(`/topic/${topic.id}`);
-                            setShowSearchResults(false);
-                            setSearchQuery("");
-                          }}
-                        >
-                          <div className={styles.searchResultWithIcon}>
-                            {getTopicImage(topic.name) && (
-                              <img
-                                src={getTopicImage(topic.name)}
-                                alt={topic.name}
-                                className={styles.searchResultIcon}
-                              />
-                            )}
-                            <div className={styles.searchResultTitle}>
-                              {topic.name}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <div className={styles.searchResultsEmpty}>
-                      No topics found
-                    </div>
-                  )}
-                </>
+                <div className={styles.searchResultsEmpty}>
+                  No questions found
+                </div>
               )}
             </div>
           )}
         </div>
         <div className={styles.userActions}>
-          <div
-            className={styles.userDropdown}
-            onMouseEnter={() => setIsUserDropdownOpen(true)}
-            onMouseLeave={() => setIsUserDropdownOpen(false)}
-          >
+          <div className={styles.userDropdown} ref={userDropdownRef}>
             <img
               src={getUserPicture()}
               alt={getUserName()}
               className={styles.profilePic}
               style={{ cursor: "pointer" }}
+              onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
             />
             {isUserDropdownOpen && (
               <div className={styles.dropdownMenu}>

@@ -5,6 +5,7 @@ import Welcome from "./pages/Welcome";
 import QuestionDetail from "./pages/QuestionDetail";
 import TopicDetail from "./pages/TopicDetail";
 import Loading from "./components/Loading";
+import AuthenticatedLayout from "./components/AuthenticatedLayout";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -17,37 +18,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated || isDemoAuthenticated ? (
-              <Home />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route
-          path="/question/:id"
-          element={
-            isAuthenticated || isDemoAuthenticated ? (
-              <QuestionDetail />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route
-          path="/topic/:id"
-          element={
-            isAuthenticated || isDemoAuthenticated ? (
-              <TopicDetail />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+        {/* Public route - NO sidebars, NO AuthenticatedLayout */}
         <Route path="/login" element={<Welcome />} />
+        
+        {/* Authenticated routes - WITH sidebars via AuthenticatedLayout */}
+        <Route
+          path="/*"
+          element={
+            isAuthenticated || isDemoAuthenticated ? (
+              <AuthenticatedLayout>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/question/:id" element={<QuestionDetail />} />
+                  <Route path="/topic/:id" element={<TopicDetail />} />
+                </Routes>
+              </AuthenticatedLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

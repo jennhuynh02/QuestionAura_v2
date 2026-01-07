@@ -6,7 +6,6 @@ import { topicService } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
 import type { UserResponse } from "../api/userService";
-import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./TopicDetail.module.css";
@@ -136,13 +135,19 @@ export default function TopicDetail() {
       currentUser &&
       ("first_name" in currentUser || "last_name" in currentUser)
     ) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      const fullName = `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=b92b27&color=ffffff`;
+      const fullName =
+        `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        fullName
+      )}&background=b92b27&color=ffffff`;
     }
     // Fallback to email-based avatar
-    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}&background=b92b27&color=ffffff`;
+    return `https://ui-avatars.com/api/?name=${
+      currentUser?.email || "User"
+    }&background=b92b27&color=ffffff`;
   };
 
   const getUserName = () => {
@@ -154,24 +159,23 @@ export default function TopicDetail() {
     }
     // For UserResponse (has first_name and last_name properties)
     if ("first_name" in currentUser || "last_name" in currentUser) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
+      return (
+        `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User"
+      );
     }
     // Fallback to email
     return currentUser.email || "Guest User";
   };
 
   if (!topic) {
-    return (
-      <AuthenticatedLayout>
-        <div className={styles.loading}>Loading...</div>
-      </AuthenticatedLayout>
-    );
+    return <div className={styles.loading}>Loading...</div>;
   }
 
   return (
-    <AuthenticatedLayout activeTopicId={topic.id}>
+    <>
       <div className={styles.content}>
         {/* Topic Header */}
         <div className={styles.topicHeader}>
@@ -270,6 +274,6 @@ export default function TopicDetail() {
         userPicture={getUserPicture()}
         defaultTopicId={parseInt(id!)}
       />
-    </AuthenticatedLayout>
+    </>
   );
 }

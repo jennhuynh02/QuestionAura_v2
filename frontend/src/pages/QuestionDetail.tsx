@@ -6,7 +6,6 @@ import { answerService } from "../api/answerService";
 import type { QuestionResponse } from "../api/questionService";
 import type { AnswerResponse } from "../api/answerService";
 import type { UserResponse } from "../api/userService";
-import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import Loading from "../components/Loading";
 import AnswerFormModal from "../components/AnswerFormModal";
 import styles from "./QuestionDetail.module.css";
@@ -65,19 +64,27 @@ export default function QuestionDetail() {
   }, [id, loadQuestion]);
 
   const getUserPicture = (
-    user?: UserResponse | { first_name?: string; last_name?: string; email?: string } | null
+    user?:
+      | UserResponse
+      | { first_name?: string; last_name?: string; email?: string }
+      | null
   ) => {
     if (user) {
       const firstName = "first_name" in user ? user.first_name : "";
       const lastName = "last_name" in user ? user.last_name : "";
       const name = `${firstName} ${lastName}`.trim() || user.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=b92b27&color=ffffff`;
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        name
+      )}&background=b92b27&color=ffffff`;
     }
     return `https://ui-avatars.com/api/?name=User&background=b92b27&color=ffffff`;
   };
 
   const getUserName = (
-    user?: UserResponse | { first_name?: string; last_name?: string; email?: string } | null
+    user?:
+      | UserResponse
+      | { first_name?: string; last_name?: string; email?: string }
+      | null
   ) => {
     if (user) {
       const firstName = "first_name" in user ? user.first_name : "";
@@ -105,9 +112,12 @@ export default function QuestionDetail() {
     }
     // UserResponse has first_name and last_name
     if ("first_name" in currentUser || "last_name" in currentUser) {
-      const firstName = "first_name" in currentUser ? currentUser.first_name : "";
+      const firstName =
+        "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
-      return `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User";
+      return (
+        `${firstName} ${lastName}`.trim() || currentUser.email || "Guest User"
+      );
     }
     return currentUser.email || "Guest User";
   };
@@ -128,19 +138,17 @@ export default function QuestionDetail() {
 
   if (error || !question) {
     return (
-      <AuthenticatedLayout>
-        <div className={styles.errorContainer}>
-          <h2>{error || "Question not found"}</h2>
-          <button onClick={() => navigate("/")} className={styles.backButton}>
-            Go Back to Feed
-          </button>
-        </div>
-      </AuthenticatedLayout>
+      <div className={styles.errorContainer}>
+        <h2>{error || "Question not found"}</h2>
+        <button onClick={() => navigate("/")} className={styles.backButton}>
+          Go Back to Feed
+        </button>
+      </div>
     );
   }
 
   return (
-    <AuthenticatedLayout activeTopicId={question.topic.id}>
+    <>
       <div className={styles.mainContent}>
         <div className={styles.questionCard}>
           <div className={styles.questionHeader}>
@@ -231,6 +239,6 @@ export default function QuestionDetail() {
         userName={getUserNameDisplay()}
         questionId={question.id}
       />
-    </AuthenticatedLayout>
+    </>
   );
 }
