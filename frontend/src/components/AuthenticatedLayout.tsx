@@ -178,10 +178,10 @@ export default function AuthenticatedLayout({
       const firstName = "first_name" in currentUser ? currentUser.first_name : "";
       const lastName = "last_name" in currentUser ? currentUser.last_name : "";
       const fullName = `${firstName} ${lastName}`.trim() || currentUser?.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`;
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=b92b27&color=ffffff`;
     }
     // Fallback to email-based avatar
-    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}`;
+    return `https://ui-avatars.com/api/?name=${currentUser?.email || "User"}&background=b92b27&color=ffffff`;
   };
 
   const getUserName = () => {

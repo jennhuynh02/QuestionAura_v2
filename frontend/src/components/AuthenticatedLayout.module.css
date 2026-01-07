@@ -143,6 +143,7 @@
   border-radius: 50%;
   background-color: #ddd;
   transition: opacity 0.2s ease;
+  border: 2px solid #b92b27;
 }
 
 .profilePic:hover {

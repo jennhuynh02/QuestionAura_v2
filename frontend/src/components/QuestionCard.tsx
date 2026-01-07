@@ -68,7 +68,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     const firstName = user?.first_name || "";
     const lastName = user?.last_name || "";
     const name = `${firstName} ${lastName}`.trim() || user?.email || "User";
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=b92b27&color=ffffff`;
   };
 
   const getUserName = (user: UserResponse) => {
@@ -129,6 +129,21 @@ export default function QuestionCard({ question }: QuestionCardProps) {
             </div>
           )}
         </div>
+        {question.asker && (
+          <div className={styles.questionAskerMeta}>
+            <img
+              src={getUserPicture(question.asker)}
+              alt={getUserName(question.asker)}
+              className={styles.questionAskerAvatar}
+            />
+            <span className={styles.questionAskerName}>
+              {getUserName(question.asker)}
+            </span>
+            <span className={styles.questionAskerDate}>
+              asked {formatDate(question.created_at)}
+            </span>
+          </div>
+        )}
         <div className={styles.topicBadge}>{question.topic.name}</div>
       </div>
 

@@ -71,9 +71,9 @@ export default function QuestionDetail() {
       const firstName = "first_name" in user ? user.first_name : "";
       const lastName = "last_name" in user ? user.last_name : "";
       const name = `${firstName} ${lastName}`.trim() || user.email || "User";
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=b92b27&color=ffffff`;
     }
-    return `https://ui-avatars.com/api/?name=User`;
+    return `https://ui-avatars.com/api/?name=User&background=b92b27&color=ffffff`;
   };
 
   const getUserName = (
