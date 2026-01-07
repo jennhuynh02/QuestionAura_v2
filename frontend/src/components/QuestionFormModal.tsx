@@ -46,39 +46,49 @@ export default function QuestionFormModal({
     try {
       const topicsData = await topicService.getAllTopics();
       setTopics(topicsData);
-      if (!selectedTopicId) {
-        // Use defaultTopicId if provided, otherwise use first topic
-        if (defaultTopicId) {
-          setSelectedTopicId(defaultTopicId);
-        } else if (topicsData.length > 0) {
-          setSelectedTopicId(topicsData[0].id);
-        }
-      }
     } catch (err) {
       console.error("Failed to load topics:", err);
       setError("Failed to load topics");
     }
-  }, [selectedTopicId, defaultTopicId]);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
+      // Load topics when modal opens
       loadTopics();
-      // Pre-populate form if in edit mode
+      
+      // Initialize form state based on mode
       if (isEditMode && initialQuestion) {
+        // Edit mode: pre-populate with existing question data
         setQuestionText(initialQuestion.ask);
         setSelectedTopicId(initialQuestion.topic.id);
         if (initialQuestion.image_url) {
           setImagePreview(initialQuestion.image_url);
         }
+        setSelectedFile(null);
       } else {
-        // Reset form for create mode
+        // Create mode: reset form and initialize topic selection
         setQuestionText("");
-        setSelectedTopicId(null);
         setImagePreview(null);
         setSelectedFile(null);
+        
+        // Initialize topic selection: use defaultTopicId if provided, otherwise null
+        if (defaultTopicId) {
+          setSelectedTopicId(defaultTopicId);
+        } else {
+          setSelectedTopicId(null);
+        }
       }
+      setError(null);
+    } else {
+      // Reset form when modal closes
+      setQuestionText("");
+      setSelectedTopicId(null);
+      setImagePreview(null);
+      setSelectedFile(null);
+      setError(null);
     }
-  }, [isOpen, loadTopics, isEditMode, initialQuestion]);
+  }, [isOpen, isEditMode, initialQuestion, defaultTopicId, loadTopics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
