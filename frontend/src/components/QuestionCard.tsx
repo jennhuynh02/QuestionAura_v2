@@ -142,7 +142,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
             <span className={styles.questionAskerDate}>
               asked {formatDate(question.created_at)}
             </span>
-            <div className={styles.topicBadge}>{question.topic.name}</div>
+        <div className={styles.topicBadge}>{question.topic.name}</div>
           </div>
         )}
       </div>
