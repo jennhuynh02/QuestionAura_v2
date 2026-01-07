@@ -43,30 +43,30 @@ USERS = [
 ]
 
 QUESTIONS = [
-    {"id": 201, "ask": "What's the best strategy for becoming better at solving algorithms?", "asker_id": 106, "topic_id": 1},
-    {"id": 202, "ask": "How do I help myself better understand recursions?", "asker_id": 101, "topic_id": 1},
-    {"id": 203, "ask": "What are some useful websites or applications for financial health?  I'm looking for tools for investing and managing my finances.", "asker_id": 105, "topic_id": 2},
-    {"id": 204, "ask": "What is your best and worst purchase?", "asker_id": 102, "topic_id": 2},
-    {"id": 205, "ask": "What is your favorite science fiction book?", "asker_id": 104, "topic_id": 3},
-    {"id": 206, "ask": "Name a book were you required to read in high school?", "asker_id": 103, "topic_id": 3},
-    {"id": 207, "ask": "What factors lead to the mass incarceration of American citizens?", "asker_id": 103, "topic_id": 4},
-    {"id": 208, "ask": "What is white collar crime?", "asker_id": 104, "topic_id": 4},
-    {"id": 209, "ask": "Can you share some philosophical quotes?", "asker_id": 102, "topic_id": 5},
-    {"id": 210, "ask": "Who are some famous philosophers?", "asker_id": 105, "topic_id": 5},
-    {"id": 211, "ask": "Where is a good place to go hiking?", "asker_id": 101, "topic_id": 6},
-    {"id": 212, "ask": "Name an interesting natural phenomenon?", "asker_id": 106, "topic_id": 6},
-    {"id": 213, "ask": "What famous psychology experiments have been conducted?", "asker_id": 107, "topic_id": 7},
-    {"id": 214, "ask": "What causes addiction?", "asker_id": 112, "topic_id": 7},
-    {"id": 215, "ask": "Name some famous EDM artists?", "asker_id": 108, "topic_id": 8},
-    {"id": 216, "ask": "Can you name some popular indie music artists?", "asker_id": 111, "topic_id": 8},
-    {"id": 217, "ask": "What are some of the best tech companies to work for in terms of: culture, career growth, salary, perks, etc.?", "asker_id": 109, "topic_id": 9},
-    {"id": 218, "ask": "What was your experience like at App Academy?  Why did you attend and was it worth it?", "asker_id": 110, "topic_id": 9},
-    {"id": 219, "ask": "When was the first electric car made?", "asker_id": 110, "topic_id": 10},
-    {"id": 220, "ask": "What is Question Aura?", "asker_id": 109, "topic_id": 10},
-    {"id": 221, "ask": "What is surrealism?", "asker_id": 111, "topic_id": 11},
-    {"id": 222, "ask": "What are uncommon forms art?", "asker_id": 108, "topic_id": 11},
-    {"id": 223, "ask": "What are some of the most memorable wars?", "asker_id": 112, "topic_id": 12},
-    {"id": 224, "ask": "What wars involved parties in the same country?", "asker_id": 107, "topic_id": 12},
+    {"id": 201, "ask": "What's the best strategy for becoming better at solving algorithms?", "asker_id": 106, "topic_id": 1, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795559/https_3A_2F_2Fsubstack-post-media.s3.amazonaws.com_2Fpublic_2Fimages_2F1a0b096f-b3ee-4585-9583-02066a15455d_5320x3324_ksmw35.png"},
+    {"id": 202, "ask": "How do I help myself better understand recursions?", "asker_id": 101, "topic_id": 1, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795481/maxresdefault_zk9vb1.jpg"},
+    {"id": 203, "ask": "What are some useful websites or applications for financial health?  I'm looking for tools for investing and managing my finances.", "asker_id": 105, "topic_id": 2, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795600/1520129303511_zhnuey.jpg"},
+    {"id": 204, "ask": "What is your best and worst purchase?", "asker_id": 102, "topic_id": 2, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795655/buyer-decision-process-in-five-phases_qcuioj.png"},
+    {"id": 205, "ask": "What is your favorite science fiction book?", "asker_id": 104, "topic_id": 3, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795693/71gTxlFcItL._AC_UF1000_1000_QL80__fwochv.jpg"},
+    {"id": 206, "ask": "Name a book were you required to read in high school?", "asker_id": 103, "topic_id": 3, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795719/The_Catcher_in_the_Rye__281951_2C_first_edition_cover_29_gxdapv.jpg"},
+    {"id": 207, "ask": "What factors lead to the mass incarceration of American citizens?", "asker_id": 103, "topic_id": 4, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795742/e28a6b_ac2f452dc90a42e09910fc37419c401f_mv2_gp8z9d.png"},
+    {"id": 208, "ask": "What is white collar crime?", "asker_id": 104, "topic_id": 4, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795787/white-collar-crime_h3ewdn.jpg"},
+    {"id": 209, "ask": "Can you share some philosophical quotes?", "asker_id": 102, "topic_id": 5, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795872/Qblqd67_fss6sz.jpg"},
+    {"id": 210, "ask": "Who are some famous philosophers?", "asker_id": 105, "topic_id": 5, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796151/71SIAfn6f6L._AC_UF1000_1000_QL80__f48szv.jpg"},
+    {"id": 211, "ask": "Where is a good place to go hiking?", "asker_id": 101, "topic_id": 6, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767795921/1200px-Chimney_Rock_Trail_Point_Reyes_December_2016_panorama_1_ugwptx.jpg"},
+    {"id": 212, "ask": "Name an interesting natural phenomenon?", "asker_id": 106, "topic_id": 6, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796201/71386_z9h5ik.jpg"},
+    {"id": 213, "ask": "What famous psychology experiments have been conducted?", "asker_id": 107, "topic_id": 7, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796322/Guards-prisoner-Phillip-Zimbardo-Stanford-Prison-Experiment_xsxnht.jpg"},
+    {"id": 214, "ask": "What causes addiction?", "asker_id": 112, "topic_id": 7, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796286/Dopamine-Addiction-Symptoms-Causes-and-How-to-Overcome-It_g4eq24.webp"},
+    {"id": 215, "ask": "Name some famous EDM artists?", "asker_id": 108, "topic_id": 8, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796350/maxresdefault_cxmqxg.jpg"},
+    {"id": 216, "ask": "Can you name some popular indie music artists?", "asker_id": 111, "topic_id": 8, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796401/tame-impala-lead-photo_qfhmz3.jpg"},
+    {"id": 217, "ask": "What are some of the best tech companies to work for in terms of: culture, career growth, salary, perks, etc.?", "asker_id": 109, "topic_id": 9, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796690/GAFA-Big-Tech_v7d6pc.jpg"},
+    {"id": 218, "ask": "What was your experience like at App Academy?  Why did you attend and was it worth it?", "asker_id": 110, "topic_id": 9, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796736/5faae1191b673c881b077e1f_ogaa-min_x2rgum.png"},
+    {"id": 219, "ask": "When was the first electric car made?", "asker_id": 110, "topic_id": 10, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796757/filters_3Aquality_2870_29_kk7cwj.jpg"},
+    {"id": 220, "ask": "What is Question Aura?", "asker_id": 109, "topic_id": 10, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767797652/IMG_0930_yazcjk.png"},
+    {"id": 221, "ask": "What is surrealism?", "asker_id": 111, "topic_id": 11, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796624/the-persistence-of-memory-1931-1140x867_l22qtc.jpg"},
+    {"id": 222, "ask": "What are uncommon forms art?", "asker_id": 108, "topic_id": 11, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796586/1965marcel-duchamp_new-scan_g_11.jpg_mxvn7a.jpg"},
+    {"id": 223, "ask": "What are some of the most memorable wars?", "asker_id": 112, "topic_id": 12, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796493/US-Marines-bombing-bunkers-tunnels-Viet-Cong-1966_yds3dk.jpg"},
+    {"id": 224, "ask": "What wars involved parties in the same country?", "asker_id": 107, "topic_id": 12, "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796554/civil-war-gettyimages-3427284_vbqzyw.jpg"},
 ]
 
 ANSWERS = [
@@ -189,7 +189,7 @@ def seed_questions(db, topic_map, user_map):
                 topic_id=topic_map[data["topic_id"]].id,
                 ask=data["ask"],
                 asker_id=user_map[data["asker_id"]].id,
-                image_url=None
+                image_url=data.get("image_url")
             )
             db.add(question)
             id_map[data["id"]] = question

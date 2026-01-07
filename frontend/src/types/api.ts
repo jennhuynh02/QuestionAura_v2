@@ -36,7 +36,7 @@ export interface paths {
         /**
          * Sync User
          * @description Sync or create user from Auth0 authentication.
-         *     Requires user data in request body including username.
+         *     Requires user data in request body including first_name and last_name.
          */
         post: operations["sync_user_users_sync_post"];
         delete?: never;
@@ -506,8 +506,10 @@ export interface components {
              * Format: email
              */
             email: string;
-            /** Username */
-            username: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
             /** Auth0 Id */
             auth0_id: string;
         };
@@ -521,8 +523,10 @@ export interface components {
              * Format: email
              */
             email: string;
-            /** Username */
-            username: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
             /** Auth0 Id */
             auth0_id: string;
             /** Id */
