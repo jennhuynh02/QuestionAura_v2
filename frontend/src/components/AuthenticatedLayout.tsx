@@ -150,7 +150,7 @@ export default function AuthenticatedLayout({
   const handleLogout = () => {
     if (isDemoMode) {
       clearDemoAuth();
-      navigate("/login");
+      navigate("/welcome");
     } else {
       logout({ logoutParams: { returnTo: window.location.origin } });
     }

@@ -15,7 +15,7 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Public route - NO sidebars, NO AuthenticatedLayout */}
-      <Route path="/login" element={<Welcome />} />
+      <Route path="/welcome" element={<Welcome />} />
 
       {/* Authenticated routes - WITH sidebars via AuthenticatedLayout */}
       <Route
@@ -30,7 +30,7 @@ function AppRoutes() {
               </Routes>
             </AuthenticatedLayout>
           ) : (
-            <Navigate to="/login" />
+            <Navigate to="/welcome" />
           )
         }
       />
