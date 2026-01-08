@@ -4,6 +4,9 @@ In an attempt to clone a dynamic social application, I've opted to clone Quora's
 
 This remaster is a career-tribute rebuild of the original [QuestionAura (2020)](https://github.com/jennhuynh02/QuestionAura) project, serving as both a learning journey and a demonstration of modern development practices with AI-assisted development.
 
+![demoqa](https://github.com/user-attachments/assets/094f558e-5a74-4751-b331-e3b60b481594)
+
+
 ## Project Intent
 
 QuestionAura was my capstone project at App Academy, the bootcamp that kickstarted my career. The original version is no longer hosted (regrets about not keeping up with Ruby versioning on Heroku), but it's been 5 years, and I'm ready to rebuild it with the tech stack I'll most likely be using in my next role.
