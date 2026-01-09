@@ -43,7 +43,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/topic/:id"
+        path="/topic/:slug"
         element={
           isUserAuthenticated ? (
             <AuthenticatedLayout>

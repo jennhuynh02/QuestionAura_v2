@@ -9,6 +9,7 @@ import type { TopicResponse } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
 import styles from "./AuthenticatedLayout.module.css";
 import { useAuth } from "../hooks/useAuth";
+import { toSlug } from "../utils/slug";
 
 // Import topic images
 import codingImg from "../assets/coding.jpg";
@@ -205,8 +206,9 @@ export default function AuthenticatedLayout({
     [performSearch]
   );
 
-  const handleTopicClick = (topicId: number) => {
-    navigate(`/topic/${topicId}`);
+  const handleTopicClick = (topic: TopicResponse) => {
+    const slug = toSlug(topic.name);
+    navigate(`/topic/${slug}`);
   };
 
   const handleDashboardClick = () => {
@@ -270,9 +272,9 @@ export default function AuthenticatedLayout({
   // Determine if we're on dashboard (home page)
   const isDashboard = location.pathname === "/";
 
-  // Extract topic ID from URL pathname
-  const topicMatch = location.pathname.match(/^\/topic\/(\d+)$/);
-  const currentTopicId = topicMatch ? parseInt(topicMatch[1], 10) : null;
+  // Extract topic slug from URL pathname
+  const topicMatch = location.pathname.match(/^\/topic\/(.+)$/);
+  const currentTopicSlug = topicMatch ? topicMatch[1] : null;
 
   const handleCopyLink = async (url: string, linkType: string) => {
     try {
@@ -381,16 +383,15 @@ export default function AuthenticatedLayout({
           {topics.map((topic) => {
             const topicImage =
               getTopicImage(topic.name) || topic.image_url || "";
-            const isActive =
-              currentTopicId === topic.id ||
-              location.pathname === `/topic/${topic.id}`;
+            const topicSlug = toSlug(topic.name);
+            const isActive = currentTopicSlug === topicSlug;
             return (
               <div
                 key={topic.id}
                 className={`${styles.sidebarItem} ${
                   isActive ? styles.activeSidebarItem : ""
                 }`}
-                onClick={() => handleTopicClick(topic.id)}
+                onClick={() => handleTopicClick(topic)}
               >
                 {topicImage && (
                   <img

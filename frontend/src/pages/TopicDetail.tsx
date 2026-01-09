@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { questionService } from "../api/questionService";
 import { topicService } from "../api/topicService";
 import type { QuestionResponse } from "../api/questionService";
@@ -9,6 +9,7 @@ import QuestionFormModal from "../components/QuestionFormModal";
 import QuestionCard from "../components/QuestionCard";
 import styles from "./TopicDetail.module.css";
 import { useAuth } from "../hooks/useAuth";
+import { getTopicIdFromSlug } from "../utils/slug";
 
 // Import topic images
 import codingImg from "../assets/coding.jpg";
@@ -44,9 +45,10 @@ const getTopicImage = (topicName: string): string => {
 };
 
 export default function TopicDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { user, isAuthenticated } = useAuth0();
   const { demoAuth } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Check if user is using demo login
@@ -55,8 +57,10 @@ export default function TopicDetail() {
 
   const [questions, setQuestions] = useState<QuestionResponse[]>([]);
   const [topic, setTopic] = useState<TopicResponse | null>(null);
+  const [topics, setTopics] = useState<TopicResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [topicNotFound, setTopicNotFound] = useState(false);
 
   // Pagination state - read from URL, default to 1
   const pageParam = searchParams.get("page");
@@ -77,22 +81,46 @@ export default function TopicDetail() {
     [setSearchParams]
   );
 
+  // Load topics list to convert slug to ID
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const topicsData = await topicService.getAllTopics();
+        setTopics(topicsData);
+      } catch (err) {
+        console.error("Failed to load topics:", err);
+      }
+    };
+    loadTopics();
+  }, []);
+
   const loadTopic = useCallback(async () => {
-    if (!id) return;
+    if (!slug || topics.length === 0) return;
+    
+    // Convert slug to topic ID
+    const topicId = getTopicIdFromSlug(slug, topics);
+    
+    if (!topicId) {
+      setTopicNotFound(true);
+      return;
+    }
+    
     try {
-      const topicData = await topicService.getTopicById(parseInt(id));
+      const topicData = await topicService.getTopicById(topicId);
       setTopic(topicData);
+      setTopicNotFound(false);
     } catch (err) {
       console.error("Failed to load topic:", err);
+      setTopicNotFound(true);
     }
-  }, [id]);
+  }, [slug, topics]);
 
   const loadQuestions = useCallback(async () => {
-    if (!id) return;
+    if (!topic) return;
     setIsLoading(true);
     try {
       const response = await questionService.getAllQuestions({
-        topic_id: parseInt(id),
+        topic_id: topic.id,
         page: currentPage,
         page_size: pageSize,
       });
@@ -103,7 +131,7 @@ export default function TopicDetail() {
     } finally {
       setIsLoading(false);
     }
-  }, [id, currentPage, pageSize]);
+  }, [topic, currentPage, pageSize]);
 
   useEffect(() => {
     loadTopic();
@@ -165,6 +193,16 @@ export default function TopicDetail() {
     // Fallback to email
     return currentUser.email || "Guest User";
   };
+
+  if (topicNotFound) {
+    return (
+      <div className={styles.content}>
+        <div className={styles.loading}>
+          Topic not found. <button onClick={() => navigate("/")}>Go to Dashboard</button>
+        </div>
+      </div>
+    );
+  }
 
   if (!topic) {
     return <div className={styles.loading}>Loading...</div>;
@@ -268,7 +306,7 @@ export default function TopicDetail() {
         onSubmit={handleQuestionCreated}
         userName={getUserName()}
         userPicture={getUserPicture()}
-        defaultTopicId={parseInt(id!)}
+        defaultTopicId={topic.id}
       />
     </>
   );
