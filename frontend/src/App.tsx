@@ -11,29 +11,52 @@ import { useAuth } from "./hooks/useAuth";
 function AppRoutes() {
   const { isAuthenticated } = useAuth0();
   const { isDemoAuthenticated } = useAuth();
+  const isUserAuthenticated = isAuthenticated || isDemoAuthenticated;
 
   return (
     <Routes>
-      {/* Public route - NO sidebars, NO AuthenticatedLayout */}
-      <Route path="/welcome" element={<Welcome />} />
-
-      {/* Authenticated routes - WITH sidebars via AuthenticatedLayout */}
+      {/* Root route - Welcome for non-authenticated, Home for authenticated */}
       <Route
-        path="/*"
+        path="/"
         element={
-          isAuthenticated || isDemoAuthenticated ? (
+          isUserAuthenticated ? (
             <AuthenticatedLayout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/question/:id" element={<QuestionDetail />} />
-                <Route path="/topic/:id" element={<TopicDetail />} />
-              </Routes>
+              <Home />
             </AuthenticatedLayout>
           ) : (
-            <Navigate to="/welcome" />
+            <Welcome />
           )
         }
       />
+
+      {/* Protected routes - require authentication */}
+      <Route
+        path="/question/:id"
+        element={
+          isUserAuthenticated ? (
+            <AuthenticatedLayout>
+              <QuestionDetail />
+            </AuthenticatedLayout>
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
+      />
+      <Route
+        path="/topic/:id"
+        element={
+          isUserAuthenticated ? (
+            <AuthenticatedLayout>
+              <TopicDetail />
+            </AuthenticatedLayout>
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
+      />
+
+      {/* Catch-all route - handles any invalid route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaLinkedin, FaGithub, FaCopy } from "react-icons/fa";
+import Fuse from "fuse.js";
 import { topicService } from "../api/topicService";
 import { questionService } from "../api/questionService";
 import type { TopicResponse } from "../api/topicService";
@@ -71,6 +72,8 @@ export default function AuthenticatedLayout({
     questions: QuestionResponse[];
   }>({ questions: [] });
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [allQuestions, setAllQuestions] = useState<QuestionResponse[]>([]);
+  const [questionsLoaded, setQuestionsLoaded] = useState(false);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -107,29 +110,92 @@ export default function AuthenticatedLayout({
     loadTopics();
   }, [setTopics]);
 
+  // Load all questions for fuzzy matching
+  useEffect(() => {
+    const loadAllQuestions = async () => {
+      if (questionsLoaded) return;
+      
+      try {
+        // Fetch all questions by paginating through all pages
+        const allQuestionsList: QuestionResponse[] = [];
+        let currentPage = 1;
+        let hasMore = true;
+        const pageSize = 100;
+
+        while (hasMore) {
+          const response = await questionService.getAllQuestions({
+            page: currentPage,
+            page_size: pageSize,
+          });
+          
+          allQuestionsList.push(...response.items);
+          
+          // Check if there are more pages
+          hasMore = response.page < response.total_pages;
+          currentPage++;
+        }
+        
+        setAllQuestions(allQuestionsList);
+        setQuestionsLoaded(true);
+      } catch (err) {
+        console.error("Failed to load questions for search:", err);
+        setQuestionsLoaded(true); // Set to true to prevent retry loops
+      }
+    };
+    loadAllQuestions();
+  }, [questionsLoaded]);
+
+  // Create Fuse instance for fuzzy matching
+  const fuse = useMemo(() => {
+    if (allQuestions.length === 0) return null;
+    
+    return new Fuse(allQuestions, {
+      keys: ["ask"],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 2,
+      includeScore: true,
+    });
+  }, [allQuestions]);
+
   // Separate function to perform the actual search without updating query state
-  const performSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setShowSearchResults(false);
-      setSearchResults({ questions: [] });
-      return;
-    }
+  const performSearch = useCallback(
+    (query: string) => {
+      if (!query.trim()) {
+        setShowSearchResults(false);
+        setSearchResults({ questions: [] });
+        return;
+      }
 
-    setShowSearchResults(true);
+      setShowSearchResults(true);
 
-    try {
-      // Search questions only
-      const response = await questionService.getAllQuestions({
-        search: query,
-        page: 1,
-        page_size: 10,
-      });
-      setSearchResults({ questions: response.items });
-    } catch (err) {
-      console.error("Search failed:", err);
-      setSearchResults({ questions: [] });
-    }
-  }, []);
+      // Use fuzzy matching if fuse is available and we have questions loaded
+      if (fuse && allQuestions.length > 0) {
+        const fuzzyResults = fuse.search(query, { limit: 10 });
+        const matchedQuestions = fuzzyResults.map((result) => result.item);
+        setSearchResults({ questions: matchedQuestions });
+      } else if (questionsLoaded && allQuestions.length === 0) {
+        // No questions available
+        setSearchResults({ questions: [] });
+      } else {
+        // Fallback to backend search while questions are loading
+        questionService
+          .getAllQuestions({
+            search: query,
+            page: 1,
+            page_size: 10,
+          })
+          .then((response) => {
+            setSearchResults({ questions: response.items });
+          })
+          .catch((err) => {
+            console.error("Search failed:", err);
+            setSearchResults({ questions: [] });
+          });
+      }
+    },
+    [fuse, allQuestions, questionsLoaded]
+  );
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -150,7 +216,7 @@ export default function AuthenticatedLayout({
   const handleLogout = () => {
     if (isDemoMode) {
       clearDemoAuth();
-      navigate("/welcome");
+      navigate("/");
     } else {
       logout({ logoutParams: { returnTo: window.location.origin } });
     }
