@@ -212,15 +212,17 @@ export default function Welcome() {
 
         <div className={styles.content}>
           <div className={styles.leftCol}>
-            <button className={styles.demoBtn} onClick={() => handleLogin()}>
-              Log in
-            </button>
-            <button
-              className={styles.signupBtn}
-              onClick={() => handleLogin(true)}
-            >
-              Create account
-            </button>
+            <div className={styles.buttonContainer}>
+              <button className={styles.demoBtn} onClick={() => handleLogin()}>
+                Log in
+              </button>
+              <button
+                className={styles.signupBtn}
+                onClick={() => handleLogin(true)}
+              >
+                Create account
+              </button>
+            </div>
             <div className={styles.disclaimer}>
               <span className={styles.link}>Signup With Email</span> By signing
               up or logging in, you have read and agreed to asking questions

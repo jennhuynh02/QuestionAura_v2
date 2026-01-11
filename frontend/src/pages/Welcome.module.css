@@ -11,9 +11,9 @@
 
 .card {
   background: white;
-  width: 100%;
-  max-width: 650px;
-  padding: 40px;
+  width: 65%;
+  max-width: 500px;
+  padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -30,8 +30,8 @@
   }
 
   .card {
-    max-width: 100%;
-    padding: 24px 20px;
+    width: 65%;
+    padding: 20px 16px;
     margin: 0 auto;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
@@ -40,56 +40,56 @@
 
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
   .header {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
 }
 
 .title {
   font-family: "Georgia", serif;
-  font-size: 80px;
+  font-size: 60px;
   color: #b92b27;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   font-weight: 500;
 }
 
 @media (max-width: 768px) {
   .title {
-    font-size: 42px;
-    margin-bottom: 8px;
+    font-size: 32px;
+    margin-bottom: 4px;
   }
 }
 
 .quote {
   color: #666;
-  font-size: 18px;
+  font-size: 14px;
   font-style: normal;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 @media (max-width: 768px) {
   .quote {
-    font-size: 14px;
-    margin-bottom: 16px;
+    font-size: 12px;
+    margin-bottom: 10px;
   }
 }
 
 .content {
   display: flex;
-  gap: 30px;
-  padding-bottom: 30px;
+  gap: 20px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
 
 @media (max-width: 768px) {
   .content {
     flex-direction: column;
-    gap: 24px;
-    padding-bottom: 24px;
+    gap: 16px;
+    padding-bottom: 16px;
   }
 }
 
@@ -97,7 +97,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 6px;
 }
 
 .divider {
@@ -122,12 +127,11 @@
   background-color: #5d82b1;
   color: white;
   border: none;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-weight: 400;
   cursor: pointer;
-  font-size: 16px;
-  width: 100%;
+  font-size: 12px;
+  flex: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
 }
@@ -140,12 +144,12 @@
   background-color: white;
   color: #5d82b1;
   border: 1.5px solid #5d82b1;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-weight: 600;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 400;
   cursor: pointer;
-  font-size: 16px;
-  width: 100%;
+  font-size: 12px;
+  flex: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.2s;
 }
@@ -157,10 +161,10 @@
 }
 
 .disclaimer {
-  font-size: 11px;
+  font-size: 10px;
   color: #999;
   line-height: 1.4;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .link {
@@ -170,16 +174,16 @@
 }
 
 .loginSubTitle {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   color: #333;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .inputGroup label {
@@ -191,7 +195,7 @@
   border: 1px solid #e1e9f5;
   border-radius: 6px;
   background-color: #f3f7ff;
-  font-size: 14px;
+  font-size: 12px;
   width: 100%;
   color: #666;
 }
@@ -206,30 +210,30 @@
 }
 
 .loginBtn {
-  background-color: #5d82b1;
+  background-color: #b92b27;
   color: white;
   border: none;
-  padding: 10px 24px;
+  padding: 8px 20px;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
 }
 
 .loginBtn:hover {
-  background-color: #4c6b94;
+  background-color: #9a2320;
 }
 
 .footer {
-  padding-top: 20px;
+  padding-top: 12px;
   text-align: center;
 }
 
 @media (max-width: 768px) {
   .footer {
-    padding-top: 16px;
+    padding-top: 10px;
   }
 }
 
@@ -239,13 +243,13 @@
   justify-content: center;
   gap: 15px;
   color: #666;
-  font-size: 14px;
-  margin-bottom: 10px;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
 @media (max-width: 768px) {
   .footerLinks {
-    font-size: 12px;
+    font-size: 10px;
     gap: 10px;
     flex-wrap: wrap;
   }
@@ -272,7 +276,7 @@
 }
 
 .inspiredBy {
-  font-size: 10px;
+  font-size: 9px;
   color: #999;
   text-align: left;
 }
@@ -283,9 +287,9 @@
   color: #cf1322;
   padding: 10px;
   border-radius: 4px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .syncingOverlay {
