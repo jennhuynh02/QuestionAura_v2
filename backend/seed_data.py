@@ -118,6 +118,7 @@ ANSWERS = [
     {"id": 346, "responder_id": 105, "question_id": 223, "response": "The War in Afganistan - this took place after the 9/11 attacks and is a war against terrorism.", "image_url": None},
     {"id": 347, "responder_id": 101, "question_id": 224, "response": "The Vietnam War, also known as the Second IndoChina War, took place when the communist regime aimed to take over the Southern part of Vietnam. The American soldiers tried to help but were unable to do so due to Vietnam's geography. The terrain made guerilla warfare possible, the Viet Cong used this warfare strategy to their advantage and eventually won the war.", "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1767796493/US-Marines-bombing-bunkers-tunnels-Viet-Cong-1966_yds3dk.jpg"},
     {"id": 348, "responder_id": 106, "question_id": 224, "response": "The Korean war between North and South Korea.  The two countries remain divided till this day.", "image_url": None},
+    {"id": 349, "responder_id": 111, "question_id": 201, "response": "Something that really helped me was solving problems on my own and then looking at more optimal solutions.  By writing out solutions line by line in different colors, I was able to visualize each step and gain a better understanding of the strategy being used.  Here is snapshot of my notes for a leet code problem - Pyramid Sum", "image_url": "https://res.cloudinary.com/dcxc34rid/image/upload/v1768161422/pyramid_sum_c8wu4b.jpg"},
 ]
 
 
