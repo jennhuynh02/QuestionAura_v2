@@ -328,6 +328,16 @@
   gap: 12px;
 }
 
+.authorImage {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  object-fit: cover;
+  display: block;
+  box-sizing: border-box;
+}
+
 .authorLinkRow {
   display: flex;
   align-items: center;

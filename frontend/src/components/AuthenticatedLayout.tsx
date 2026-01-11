@@ -25,6 +25,7 @@ import technologyImg from "../assets/technology.png";
 import artImg from "../assets/art.png";
 import historyImg from "../assets/history.png";
 import feedImg from "../assets/feed.jpg";
+import authorImg from "../assets/jenn_huynh.jpeg";
 
 // Map topic names to their images
 const getTopicImage = (topicName: string): string => {
@@ -115,7 +116,7 @@ export default function AuthenticatedLayout({
   useEffect(() => {
     const loadAllQuestions = async () => {
       if (questionsLoaded) return;
-      
+
       try {
         // Fetch all questions by paginating through all pages
         const allQuestionsList: QuestionResponse[] = [];
@@ -128,14 +129,14 @@ export default function AuthenticatedLayout({
             page: currentPage,
             page_size: pageSize,
           });
-          
+
           allQuestionsList.push(...response.items);
-          
+
           // Check if there are more pages
           hasMore = response.page < response.total_pages;
           currentPage++;
         }
-        
+
         setAllQuestions(allQuestionsList);
         setQuestionsLoaded(true);
       } catch (err) {
@@ -149,7 +150,7 @@ export default function AuthenticatedLayout({
   // Create Fuse instance for fuzzy matching
   const fuse = useMemo(() => {
     if (allQuestions.length === 0) return null;
-    
+
     return new Fuse(allQuestions, {
       keys: ["ask"],
       threshold: 0.4,
@@ -414,6 +415,7 @@ export default function AuthenticatedLayout({
           {/* Author Links Widget */}
           <div className={styles.widget}>
             <div className={styles.widgetTitle}>Visit the author</div>
+            <img src={authorImg} alt="Author" className={styles.authorImage} />
             <div className={styles.authorLinksContainer}>
               {/* LinkedIn Link */}
               <div className={styles.authorLinkRow}>
