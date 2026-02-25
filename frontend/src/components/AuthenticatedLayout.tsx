@@ -479,6 +479,7 @@ export default function AuthenticatedLayout({
             </div>
           </div>
 
+          {/* Calendly widget (temporarily disabled)
           <div className={styles.widget}>
             <div className={styles.widgetTitle}>Schedule a Meeting</div>
             <div className={styles.calendlyWidget}>
@@ -491,6 +492,7 @@ export default function AuthenticatedLayout({
               ></iframe>
             </div>
           </div>
+          */}
         </aside>
       </main>
     </div>
