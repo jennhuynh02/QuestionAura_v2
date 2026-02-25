@@ -6,7 +6,6 @@ This remaster is a career-tribute rebuild of the original [QuestionAura (2020)](
 
 ![demoqa](https://github.com/user-attachments/assets/094f558e-5a74-4751-b331-e3b60b481594)
 
-
 ## Project Intent
 
 QuestionAura was my capstone project at App Academy, the bootcamp that kickstarted my career. The original version is no longer hosted (regrets about not keeping up with Ruby versioning on Heroku), but it's been 5 years, and I'm ready to rebuild it with the tech stack I'll most likely be using in my next role.
@@ -17,6 +16,37 @@ This isn't just a portfolio piece. It's a working document of how I build now—
 
 **Original**: Ruby on Rails, hosted on Heroku  
 **Rebuild**: React + TypeScript, Python backend, SQL database, image hosting (coming later)
+
+## Quick Start
+
+1. Start PostgreSQL
+
+   ```bash
+   brew services start postgresql@15
+   ```
+
+2. Start the Backend
+
+   ```bash
+   cd backend
+   source venv/bin/activate
+   alembic upgrade head
+   uvicorn app.main:app --reload
+   ```
+
+   - Backend runs at `http://localhost:8000`.
+   - See [`backend/CONFIG.md`](backend/CONFIG.md) for full setup including `.env` configuration and database seeding.
+
+3. Start the Frontend
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+   - Frontend runs at `http://localhost:5173`.
+   - See [`frontend/RUNNING.md`](frontend/RUNNING.md) for full setup including `.env` and Auth0 configuration.
 
 ## Development Philosophy
 
@@ -34,4 +64,3 @@ Because this is how modern development works. Pretending AI tools don't exist or
 
 I will be actively updating my real-time thought process in a document - this is public - feel free to comment, as I am exploring learnings and ideas about software engineering and modern ai tools:
 **[Development Log](https://docs.google.com/document/d/169nCtFM70IJygxi9TUZhb2Sw239cI15fEr-gwXga3WY/edit?tab=t.0)**
-
